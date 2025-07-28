@@ -1,0 +1,131 @@
+=========================================== Problem statement ===========================================
+You have been given an array/list 'ARR' of integers. Your task is to find the second largest element present in the 'ARR'.
+
+Note:
+a) Duplicate elements may be present.
+
+b) If no such element is present return -1.
+Example:
+Input: Given a sequence of five numbers 2, 4, 5, 6, 8.
+
+Output:  6
+
+Explanation:
+In the given sequence of numbers, number 8 is the largest element, followed by number 6 which is the second-largest element. Hence we return number 6 which is the second-largest element in the sequence.
+
+
+
+=========================================== Constraints ===========================================
+1 <= T <= 100
+1 <= N <= 5000
+-10 ^ 9 <= 'SIZE' <= 10 ^ 9 
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+/*
+===========================================
+BRUTE FORCE APPROACH
+Time: O(n + nlogn) => Sorting + Traversal
+Steps:
+1. Sort the array
+2. Traverse from the end to find the first element less than the max (i.e., second largest)
+3. Handle cases where all elements are equal
+===========================================
+*/
+int findSecondLargestBrute(int n, vector<int> &arr) {
+    if(n <= 1) return -1; // Edge case: only 1 element
+
+    sort(arr.begin(), arr.end()); // Sort array ascending
+
+    int largest = arr[n - 1];
+
+    // Traverse from end to find the second largest distinct element
+    for(int i = n - 2; i >= 0; --i) {
+        if(arr[i] < largest) {
+            return arr[i];
+        }
+    }
+
+    return -1; // All elements are equal
+}
+
+/*
+===========================================
+BETTER APPROACH
+Time: O(2n)
+Steps:
+1. First pass: find the maximum element
+2. Second pass: find the max element less than the maximum
+===========================================
+*/
+int findSecondLargestBetter(int n, vector<int> &arr) {
+    if(n <= 1) return -1;
+
+    int maxi = INT_MIN;
+
+    // First pass to find the maximum
+    for(int i = 0; i < n; ++i) {
+        maxi = max(maxi, arr[i]);
+    }
+
+    int secondMaxi = INT_MIN;
+
+    // Second pass to find the max element < maximum
+    for(int i = 0; i < n; ++i) {
+        if(arr[i] < maxi) {
+            secondMaxi = max(secondMaxi, arr[i]);
+        }
+    }
+
+    return (secondMaxi == INT_MIN) ? -1 : secondMaxi;
+}
+
+/*
+===========================================
+OPTIMAL APPROACH
+Time: O(n)
+Steps:
+1. In a single pass:
+   - Update both `maxi` and `secondMaxi`
+   - If current > maxi → update both
+   - Else if current < maxi but > secondMaxi → update secondMaxi
+Edge Cases:
+- Only one unique element → return -1
+- All elements same → return -1
+===========================================
+*/
+int findSecondLargestOptimal(int n, vector<int> &arr) {
+    if(n <= 1) return -1;
+
+    int maxi = INT_MIN;
+    int secondMaxi = INT_MIN;
+
+    for(int i = 0; i < n; ++i) {
+        if(arr[i] > maxi) {
+            secondMaxi = maxi;
+            maxi = arr[i];
+        } else if(arr[i] > secondMaxi && arr[i] < maxi) {
+            secondMaxi = arr[i];
+        }
+    }
+
+    return (secondMaxi == INT_MIN) ? -1 : secondMaxi;
+}
+
+/*
+===============
+Main Function (Test)
+===============
+*/
+int main() {
+    vector<int> arr = {2, 4, 5, 6, 8};
+    int n = arr.size();
+
+    cout << "Brute Force: " << findSecondLargestBrute(n, arr) << endl;
+    cout << "Better:      " << findSecondLargestBetter(n, arr) << endl;
+    cout << "Optimal:     " << findSecondLargestOptimal(n, arr) << endl;
+
+    return 0;
+}

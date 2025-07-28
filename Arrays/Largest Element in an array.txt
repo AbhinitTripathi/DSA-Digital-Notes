@@ -1,0 +1,81 @@
+============================================================
+Problem: Largest Element in an Array
+============================================================
+
+Given an array of integers, find and return the largest 
+element present in the array.
+
+------------------------------------------------------------
+Edge Cases to Consider:
+------------------------------------------------------------
+- Array contains only one element
+- All elements are negative
+- All elements are equal
+- Array contains a mix of positive and negative integers
+
+============================================================
+Approach 1: Brute Force (Using Sort)
+============================================================
+
+Logic:
+- Sort the array in ascending order.
+- Return the last element of the sorted array.
+
+Time Complexity:  O(n log n)
+Space Complexity: O(1) if using in-place sorting
+
+Note:
+This method is inefficient since sorting is overkill
+just to find the maximum value.
+
+Code (C++):
+------------------------------------------------------------
+int findLargestBrute(vector<int>& arr) {
+    sort(arr.begin(), arr.end());     // O(n log n)
+    return arr.back();                // Last element after sort
+}
+------------------------------------------------------------
+
+============================================================
+Approach 2: Optimal (Single Pass Traversal)
+============================================================
+
+Logic:
+- Initialize a variable `maxElement` with INT_MIN (or arr[0]).
+- Loop through the array:
+    - If current element > maxElement, update maxElement.
+- Return maxElement at the end.
+
+Time Complexity:  O(n)
+Space Complexity: O(1)
+
+Code (C++):
+------------------------------------------------------------
+int findLargestOptimal(vector<int>& arr) {
+    int maxElement = INT_MIN;
+
+    for (int num : arr) {
+        if (num > maxElement) {
+            maxElement = num;
+        }
+    }
+
+    return maxElement;
+}
+------------------------------------------------------------
+
+============================================================
+Approach Comparison Summary:
+============================================================
+
+Approach       : Brute (Sort)
+Time Complexity: O(n log n)
+Space Complexity: O(1)
+Comment        : Inefficient; sorts array unnecessarily.
+
+Approach       : Optimal (Single Pass)
+Time Complexity: O(n)
+Space Complexity: O(1)
+Comment        : Best solution; uses a single pass.
+
+============================================================
