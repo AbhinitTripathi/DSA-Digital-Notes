@@ -1,0 +1,41 @@
+/*
+
+-Sorted low to high
+-Can have repeated elements
+
+arr = [0,0,1,1,1,2,2,3,3,4] -> [0,1,2,3,4,2,2,3,3,4]
+
+
+(NOT IN-PLACE)
+-> Take a new array
+-> Insert element from current array if it is != the last entered element
+(IN-PLACE)
+-> replace elements of new array in old array
+
+OPTIMAL:
+-> have 2 pointer i and j
+    i = traverses on indexes to be replaced
+    j = finds unique elements != a[i]
+-> swap a[i+1] & a[j];
+
+*/
+
+
+class Solution {
+public:
+  int removeDuplicates(vector<int>& arr) {
+    int n = arr.size();
+    if(n == 1) return 1;
+    int i = 0, j = 1;
+    while(j < n) {
+      if(arr[i] == arr[j]) {
+        j++;
+      } else {
+        i++;
+        swap(arr[i], arr[j]);
+        j++;
+      }
+    }
+    return i+1;
+  }
+};

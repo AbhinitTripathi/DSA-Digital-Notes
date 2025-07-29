@@ -1,0 +1,22 @@
+/*
+
+- Array has +ves
+- Can have repeated elements
+
+APPRAOCH 1:
+[1,1,2,3,5,5,5,6]
+-> For arr[i] it is <= arr[i+1] => if(arr[i] > arr[i+1]) return false;
+
+APPRAOCH 2:
+-> We know that in bubble/insertion sort, if array is already sorted the inner loop never runs
+-> Maybe we can check if the inner loop ran
+    if(inner loop ran) tehn not sorted
+    else sorted
+*/
+
+int isSorted(int n, vector<int> arr) {
+    for(int i = 0; i < n-1; ++i) {
+        if(arr[i] > arr[i+1]) return 0;
+    }
+    return 1;
+}
