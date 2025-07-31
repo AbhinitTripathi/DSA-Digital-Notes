@@ -1,0 +1,41 @@
+/*
+
+-Array is not sorted
+
+BRUTE: TC: O(n) SC: O(n)
+-> Take a temp array
+-> temp[i] = arr[i+1] i = 0->n-2
+-> temp[n-1] = arr[0]
+
+BETTER: TC:O(n) SC:O(n)
+-> take a temp array
+-> fill temp starting with elements of arr from d->n-1
+-> fill temp ending with elements at the starting from 0->d-1
+
+OPTIMAL: TC: O(n) SC: O(1)
+-> Store arr[0] in temp variable
+-> Move elements one place ahead in-place
+-> put arr[n-1] = temp;
+
+*/
+#include <bits/stdc++.h> 
+
+// BRUTE
+vector<int> rotateArray(vector<int>& arr, int n) {
+    vector<int> temp(n, 0);
+    for(int i = 0; i < n-1; ++i) {
+        temp[i] = arr[i+1];
+    }
+    temp[n-1] = arr[0];
+    return temp;
+}
+
+// OPTIMAL
+vector<int> rotateArray(vector<int>& arr, int n) {
+    int temp = arr[0];
+    for(int i = 0; i < n-1; i++) {
+        arr[i] = arr[i+1];
+    }
+    arr[n-1] = temp;
+    return arr;
+}
