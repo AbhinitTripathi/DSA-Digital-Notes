@@ -1,0 +1,126 @@
+Problem: Union of Two Sorted Arrays
+Given two sorted arrays, the task is to find the union of these arrays. The union should include all distinct elements present in either array, and the output should be in sorted order.
+
+Assume:
+
+Both arrays are sorted in non-decreasing order.
+
+Arrays may contain duplicate elements.
+
+Result should not contain duplicates.
+
+Approach 1: Brute Force Using Set
+Time Complexity: O((m + n) * log(m + n))
+Space Complexity: O(m + n)
+
+Logic:
+
+Traverse both arrays and insert each element into a set.
+
+Since sets automatically discard duplicates and maintain sorted order, we get a unique, sorted union.
+
+Convert the set to a vector or output format as needed.
+
+Edge Cases:
+
+One or both arrays are empty.
+
+All elements are the same.
+
+No elements are common.
+
+Code (Brute Force):
+----- BEGIN BRUTE FORCE CODE -----
+vector<int> findUnion(int arr1[], int arr2[], int n, int m) {
+set<int> s;
+for(int i = 0; i < n; i++) {
+s.insert(arr1[i]);
+}
+for(int i = 0; i < m; i++) {
+s.insert(arr2[i]);
+}
+vector<int> result(s.begin(), s.end());
+return result;
+}
+----- END BRUTE FORCE CODE -----
+
+Approach 2: Better - Two Pointers Without Extra Space
+Time Complexity: O(m + n)
+Space Complexity: O(1) if output does not count; otherwise O(m + n)
+
+Logic:
+
+Use two pointers, one for each array (i and j).
+
+Traverse both arrays simultaneously:
+
+If both elements are equal, add one of them to result and move both pointers.
+
+If arr1[i] < arr2[j], add arr1[i] to result and increment i.
+
+If arr2[j] < arr1[i], add arr2[j] to result and increment j.
+
+Skip duplicates by checking if the current element is equal to the last inserted element.
+
+After traversal, append remaining elements from either array, skipping duplicates.
+
+Edge Cases:
+
+Arrays have overlapping elements.
+
+One array is completely smaller or larger than the other.
+
+Code (Two Pointers):
+----- BEGIN TWO POINTERS CODE -----
+vector<int> findUnion(int arr1[], int arr2[], int n, int m) {
+vector<int> result;
+int i = 0, j = 0;
+while(i < n && j < m) {
+if(arr1[i] < arr2[j]) {
+if(result.empty() || result.back() != arr1[i]) {
+result.push_back(arr1[i]);
+}
+i++;
+} else if(arr1[i] > arr2[j]) {
+if(result.empty() || result.back() != arr2[j]) {
+result.push_back(arr2[j]);
+}
+j++;
+} else {
+if(result.empty() || result.back() != arr1[i]) {
+result.push_back(arr1[i]);
+}
+i++;
+j++;
+}
+}
+while(i < n) {
+if(result.empty() || result.back() != arr1[i]) {
+result.push_back(arr1[i]);
+}
+i++;
+}
+while(j < m) {
+if(result.empty() || result.back() != arr2[j]) {
+result.push_back(arr2[j]);
+}
+j++;
+}
+return result;
+}
+----- END TWO POINTERS CODE -----
+
+Summary Comparison:
+Brute Force:
+
+Uses a set to automatically handle duplicates and sorting.
+
+Simpler to implement but incurs O(log n) cost per insertion.
+
+Better (Two Pointers):
+
+More efficient in terms of space and constant-time insertion.
+
+Leverages the fact that input arrays are already sorted.
+
+Avoids extra data structures beyond the result array.
