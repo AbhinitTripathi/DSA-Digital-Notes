@@ -1,0 +1,36 @@
+/*
+
+- No Repitition
+- Nos. in array go 0->n
+- Nos. are consecutive? Can I make them consecutive?
+
+BRUTE: TC->O(n + nlogn) SC->O(1)
+-> Sort the array making the elements consecutive
+-> for every index check if(nums[i+1] != nums[i] + 1) return nums[i]+1
+    EDGE CASES:
+    i)  What if the array is of size 1?
+    ii) What if the nth element is missing
+
+OPTIMAL: TC->O(n) SC->O(1)
+-> Find the sum of first n natural numbers
+-> Find sum of array
+-> ans = nSum - arrSum;
+
+
+*/
+
+class Solution {
+public:
+    int missingNumber(vector<int>& nums) {
+        int n = nums.size();
+        int nSum = 0, arrSum = 0;
+
+        if(n/2 <= INT_MAX/(n + 1)) {
+            nSum = (n*(n+1)) / 2;
+        }
+
+        for(int el : nums) arrSum += el;
+
+        return nSum - arrSum;
+    }
+};
