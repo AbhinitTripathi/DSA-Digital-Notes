@@ -1,0 +1,57 @@
+/*
+
+BRUTE: TC->O(n^3) SC->O(1)
+-> Generate all subarrays
+-> In every subarray, if it has a 0, break or else take its size
+
+---------------------- BRUTE CODE ----------------------
+int findMaxConsecutiveOnes(vector<int>& nums) {
+    int n = nums.size();
+    int ans = 0;
+    for(int s = 0; s < n; ++s) {
+        for(int e = s; e < n; ++e) {
+            bool flag = false;
+            for(int i = s; i <= e; ++i) {
+                if(nums[i] == 0) {
+                    flag = true;
+                    break;
+                }
+
+                if(!flag) ans = max(ans, e-s+1);
+            }
+        }
+    }
+    return ans;
+}
+
+OPTIMAL: TC-O(n) SC-O(1)
+-> Traverse in the array with a counter
+    - increase counter when we see 1
+    - reset counter to 0 when we see 0
+    - keep on updating ans
+
+---------------------- OPTIMAL CODE ----------------------
+int findMaxConsecutiveOnes(vector<int>& nums) {
+    int ans = 0, count = 0;
+    for(auto &el : nums) {
+        if(el != 1) count = 0;
+        else count++;
+        ans = max(ans, count);
+    }
+    return ans;
+}
+
+*/
+
+class Solution {
+public:
+    int findMaxConsecutiveOnes(vector<int>& nums) {
+        int ans = 0, count = 0;
+        for(auto &el : nums) {
+            if(el != 1) count = 0;
+            else count++;
+            ans = max(ans, count);
+        }
+        return ans;
+    }
+};
