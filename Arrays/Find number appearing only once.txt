@@ -1,0 +1,79 @@
+/*
+
+- Unsorted Array
+- Every number appears twice except for 1
+
+BRUTE: TC->O(n^2) SC->O(1)
+-> For every element check if another element is present or not
+
+------------------- BRUTE CODE -------------------
+int singleNumber(vector<int>& nums) {
+    int n = nums.size();
+    for(int i = 0; i < n; ++i) {
+        int el = nums[i];
+        bool flag = false;
+        for(int j = i+1; j < n; ++j) {
+            if(nums[j] == el) {
+                flag = true;
+                break;
+            }
+        }
+
+        if(!flag) return el;
+    }
+}
+
+BETTER 1: TC->O(n + nlogn) SC->O(1)
+-> Sort the input array
+-> Check all the even indexes for pairs
+
+------------------- BETTER 1 CODE -------------------
+int singleNumber(vector<int>& nums) {
+    int n = nums.size();
+    sort(begin(nums), end(nums));
+
+    for(int i = 0; i < n-1; i += 2) {
+        if(nums[i+1] != nums[i]) return nums[i];
+    }
+
+    return nums[n-1];
+}
+
+BETTER 2: TC->O(n + k) [k is no. of unique elements in array] SC->O(k)
+-> Create a hashmap of num->freq
+-> Traverse in map and return the number with freq 1
+
+------------------- BETTER 2 CODE -------------------
+int singleNumber(vector<int>& nums) {
+    int n = nums.size();
+    unordered_map<int ,int> mp;
+    for(int el : nums) mp[el]++;
+
+    for(auto& p : mp) {
+        if(p.second == 1) return p.first;
+    }
+
+    return -1;
+}
+
+OPTIMAL: TC->O(n) SC->O(1)
+-> XOR all elements, remaining will be the answer
+    i)  a ^ a = 0;
+    ii) a ^ 0 = a;
+
+------------------- OPTIMAL CODE -------------------
+int singleNumber(vector<int>& nums) {
+    int ans = 0;
+    for(int el : nums) ans ^= el;
+    return ans;
+}
+*/
+
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) {
+        int ans = 0;
+        for(int el : nums) ans ^= el;
+        return ans;
+    }
+};
