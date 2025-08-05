@@ -1,0 +1,71 @@
+/*
+
+- Array elements are >= 0
+- Not sorted
+- Length of the longest subarray whose sum == k
+
+BRUTE: TC-> O(n^3) SC-> O(1)
+-> Generate all subarrays
+-> Check every subarray if it meets condition of not
+
+int longestSubarrayWithSumK(vector<int> a, long long k) {
+    int n = a.size();
+    int maxLen = -1e9;
+    for(int s = 0; s < n; ++s) {
+        for(int e = s; e < m; ++e) {
+            long long sum = 0;
+            for(int i =  s; i <= e; ++i) sum += a[i];
+            if(sum == k) {
+                int subLen = e-s+1;
+                maxLen = max(maxLen, subLen);
+            }
+        }
+    }
+
+    return maxLen;
+}
+
+BETTER: TC-> O(n^2) SC-> O(1)
+-> Generate all subarrays;
+-> Find sum while generating
+    sum of nuw subarray = a[e] + sum of old subarray
+
+int longestSubarrayWithSumK(vector<int> a, long long k) {
+    int n = a.size();
+    int maxLen = -1e9;
+    for(int s = 0; s < n; ++s) {
+        long long sum = 0;
+        for(int e = s; e < m; ++e) {
+            sum += a[e]
+            if(sum == k) maxLen = max(maxLen, e-s+1);
+            if(sum >= k) break;
+        }
+    }
+
+    return maxLen;
+}
+
+*/
+
+
+
+int longestSubarrayWithSumK(vector<int> a, long long k) {
+    int left = 0, right = 0, maxLen = 0;
+    long long sum = a[0];
+
+    int n = a.size();
+    while(right < n) {
+        while(left <= right && sum > k) {
+            sum -= a[left];
+            left++;
+        }
+
+        if(sum <= k) {
+            maxLen = max(maxLen, right-left+1);
+        }
+
+        right++;
+        if(right < n) sum += a[right];
+    }
+    return maxLen;
+}
