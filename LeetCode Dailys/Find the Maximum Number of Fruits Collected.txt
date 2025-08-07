@@ -1,0 +1,59 @@
+Recursion:
+class Solution {
+private:
+    // C1 can only move in the diagonal to reach (n-1, n-1) is n-1 steps
+    int c1Collection(vector<vector<int>>& fruits) {
+        int n = fruits.size();
+
+        int sum = 0;
+        for (int i = 0; i < n; ++i) {
+            sum += fruits[i][i];
+        }
+
+        return sum;
+    }
+
+    // C2 can only move in the upper left triangle to the prime diagonal to
+    // reach (n-1, n-1) is n-1 steps
+    int c2Collection(vector<vector<int>>& fruits, int n, int i, int j) {
+        if (i >= n || j >= n || i < 0 || j < 0 || i >= j)
+            return 0; // i >= j to check if c2 crosses prime diagonal
+        if (i == n - 1 && j == n - 1)
+            return 0; // Because (n-1, n-1) was collected by c1
+
+        int bottom_left = c2Collection(fruits, n, i + 1, j - 1);
+        int bottom_center = c2Collection(fruits, n, i + 1, j);
+        int bottom_right = c2Collection(fruits, n, i + 1, j + 1);
+
+        return fruits[i][j] +
+               max(bottom_left, max(bottom_center, bottom_right));
+    }
+
+    // C3 can only move in the lower right triangle to the prime diagonal to
+    // reach (n-1, n-1) is n-1 steps
+    int c3Collection(vector<vector<int>>& fruits, int n, int i, int j) {
+        if (i >= n || j >= n || i < 0 || j < 0 || i <= j)
+            return 0; // i <= j to check if c3 crosses prime diagonal
+        if (i == n - 1 && j == n - 1)
+            return 0; // Because (n-1, n-1) was collected by c1
+
+        int top_right = c3Collection(fruits, n, i - 1, j + 1);
+        int right = c3Collection(fruits, n, i, j + 1);
+        int bottom_right = c3Collection(fruits, n, i + 1, j + 1);
+
+        return fruits[i][j] + max(top_right, max(right, bottom_right));
+    }
+
+public:
+    int maxCollectedFruits(vector<vector<int>>& fruits) {
+        int n = fruits.size();
+
+        int c1 = c1Collection(fruits);
+        int c2 = c2Collection(fruits, n, 0, n - 1);
+        int c3 = c3Collection(fruits, n, n - 1, 0);
+
+        return c1 + c2 + c3;
+    }
+};
+
+Memoization:
