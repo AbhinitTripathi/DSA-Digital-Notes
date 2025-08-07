@@ -1,4 +1,4 @@
-Recursion:
+------------------------------------- RECURSION -------------------------------------
 class Solution {
 private:
     // C1 can only move in the diagonal to reach (n-1, n-1) is n-1 steps
@@ -57,7 +57,7 @@ public:
 };
 
 
-Memoization:
+------------------------------------- MEMOIZATION -------------------------------------
 class Solution {
 private:
     int dpc2[1001][1001], dpc3[1001][1001];
@@ -119,6 +119,222 @@ public:
         int c2 = c2Collection(fruits, n, 0, n - 1);
         int c3 = c3Collection(fruits, n, n - 1, 0);
 
+        return c1 + c2 + c3;
+    }
+};
+
+------------------------------------- TABULATION -------------------------------------
+class Solution {
+private:
+    // C1 can only move in the diagonal to reach (n-1, n-1) is n-1 steps
+    int c1Collection(vector<vector<int>>& fruits) {
+        int n = fruits.size();
+        int sum = 0;
+        for (int i = 0; i < n; ++i) {
+            sum += fruits[i][i];
+        }
+        return sum;
+    }
+
+    // C2 can only move in the upper left triangle to the prime diagonal
+    // Tabulation version - bottom up approach
+    int c2Collection(vector<vector<int>>& fruits) {
+        int n = fruits.size();
+        vector<vector<int>> dp(n, vector<int>(n, 0));
+            
+        // Fill the DP table bottom-up
+        for (int i = n-2; i >= 0; --i) {
+            for (int j = n-1; j >= 0; --j) {
+                // Skip if not in upper triangle (i >= j)
+                if (i >= j) {
+                    dp[i][j] = 0;
+                    continue;
+                }
+                
+                int maxNext = 0;
+                
+                // Check all three possible moves: down-left, down, down-right
+                // Move 1: (i+1, j-1) - down-left
+                if (i+1 < n && j-1 >= 0 && i+1 < j-1) {
+                    maxNext = max(maxNext, dp[i+1][j-1]);
+                }
+                
+                // Move 2: (i+1, j) - down
+                if (i+1 < n && j >= 0 && i+1 < j) {
+                    maxNext = max(maxNext, dp[i+1][j]);
+                }
+                
+                // Move 3: (i+1, j+1) - down-right
+                if (i+1 < n && j+1 < n && i+1 < j+1) {
+                    maxNext = max(maxNext, dp[i+1][j+1]);
+                }
+                
+                dp[i][j] = fruits[i][j] + maxNext;
+            }
+        }
+        
+        // Return the result from starting position (0, n-1)
+        return dp[0][n-1];
+    }
+
+    // C3 can only move in the lower right triangle to the prime diagonal
+    // Tabulation version - bottom up approach
+    int c3Collection(vector<vector<int>>& fruits) {
+        int n = fruits.size();
+        vector<vector<int>> dp(n, vector<int>(n, 0));
+        
+        // Fill the DP table from right to left, considering all valid moves
+        for (int j = n-2; j >= 0; --j) {
+            for (int i = 0; i < n; ++i) {
+                // Skip if not in lower triangle (i <= j)
+                if (i <= j) {
+                    dp[i][j] = 0;
+                    continue;
+                }
+                
+                int maxNext = 0;
+                
+                // Check all three possible moves: up-right, right, down-right
+                // Move 1: (i-1, j+1) - up-right
+                if (i-1 >= 0 && j+1 < n && i-1 > j+1) {
+                    maxNext = max(maxNext, dp[i-1][j+1]);
+                }
+                
+                // Move 2: (i, j+1) - right
+                if (i >= 0 && j+1 < n && i > j+1) {
+                    maxNext = max(maxNext, dp[i][j+1]);
+                }
+                
+                // Move 3: (i+1, j+1) - down-right
+                if (i+1 < n && j+1 < n && i+1 > j+1) {
+                    maxNext = max(maxNext, dp[i+1][j+1]);
+                }
+                
+                dp[i][j] = fruits[i][j] + maxNext;
+            }
+        }
+        
+        // Return the result from starting position (n-1, 0)
+        return dp[n-1][0];
+    }
+
+public:
+    int maxCollectedFruits(vector<vector<int>>& fruits) {
+        int n = fruits.size();
+        
+        int c1 = c1Collection(fruits);
+        int c2 = c2Collection(fruits);
+        int c3 = c3Collection(fruits);
+        
+        return c1 + c2 + c3;
+    }
+};
+
+------------------------------------- SPACE OTIMIZATION -------------------------------------
+class Solution {
+private:
+    // C1 can only move in the diagonal to reach (n-1, n-1) is n-1 steps
+    int c1Collection(vector<vector<int>>& fruits) {
+        int n = fruits.size();
+        int sum = 0;
+        for (int i = 0; i < n; ++i) {
+            sum += fruits[i][i];
+        }
+        return sum;
+    }
+
+    // C2 can only move in the upper left triangle to the prime diagonal
+    // Tabulation version - bottom up approach
+    int c2Collection(vector<vector<int>>& fruits) {
+        int n = fruits.size();
+        vector<int> dp(n, 0), curr(n, 0);
+            
+        // Fill the DP table bottom-up
+        for (int i = n-2; i >= 0; --i) {
+            for (int j = n-1; j >= 0; --j) {
+                // Skip if not in upper triangle (i >= j)
+                if (i >= j) {
+                    curr[j] = 0;
+                    continue;
+                }
+                
+                int maxNext = 0;
+                
+                // Check all three possible moves: down-left, down, down-right
+                // Move 1: (i+1, j-1) - down-left
+                if (i+1 < n && j-1 >= 0 && i+1 < j-1) {
+                    maxNext = max(maxNext, dp[j-1]);
+                }
+                
+                // Move 2: (i+1, j) - down
+                if (i+1 < n && j >= 0 && i+1 < j) {
+                    maxNext = max(maxNext, dp[j]);
+                }
+                
+                // Move 3: (i+1, j+1) - down-right
+                if (i+1 < n && j+1 < n && i+1 < j+1) {
+                    maxNext = max(maxNext, dp[j+1]);
+                }
+                
+                curr[j] = fruits[i][j] + maxNext;
+            }
+            dp = curr;
+        }
+        
+        // Return the result from starting position (0, n-1)
+        return dp[n-1];
+    }
+
+    // C3 can only move in the lower right triangle to the prime diagonal
+    // Tabulation version - bottom up approach
+    int c3Collection(vector<vector<int>>& fruits) {
+        int n = fruits.size();
+        vector<int> dp(n, 0), curr(n, 0);
+        
+        // Fill the DP table from right to left, considering all valid moves
+        for (int j = n-2; j >= 0; --j) {
+            for (int i = 0; i < n; ++i) {
+                // Skip if not in lower triangle (i <= j)
+                if (i <= j) {
+                    curr[i] = 0;
+                    continue;
+                }
+                
+                int maxNext = 0;
+                
+                // Check all three possible moves: up-right, right, down-right
+                // Move 1: (i-1, j+1) - up-right
+                if (i-1 >= 0 && j+1 < n && i-1 > j+1) {
+                    maxNext = max(maxNext, dp[i-1]);
+                }
+                
+                // Move 2: (i, j+1) - right
+                if (i >= 0 && j+1 < n && i > j+1) {
+                    maxNext = max(maxNext, dp[i]);
+                }
+                
+                // Move 3: (i+1, j+1) - down-right
+                if (i+1 < n && j+1 < n && i+1 > j+1) {
+                    maxNext = max(maxNext, dp[i+1]);
+                }
+                
+                curr[i] = fruits[i][j] + maxNext;
+            }
+            dp = curr;
+        }
+        
+        // Return the result from starting position (n-1, 0)
+        return dp[n-1];
+    }
+
+public:
+    int maxCollectedFruits(vector<vector<int>>& fruits) {
+        int n = fruits.size();
+        
+        int c1 = c1Collection(fruits);
+        int c2 = c2Collection(fruits);
+        int c3 = c3Collection(fruits);
+        
         return c1 + c2 + c3;
     }
 };
