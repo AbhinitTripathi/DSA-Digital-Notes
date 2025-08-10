@@ -1,0 +1,64 @@
+/*
+
+- array of n elements given
+- query array given where each element has a start and an end signifying the start and end of a subarray
+- we have to store the sum of that subarray for each query
+
+BRUTE: TC->O(n^2) SC->O(1)
+-> For every query, calculate the sum by iterating in array
+
+-------------------------------------------------- BRUTE CODE --------------------------------------------------
+vector<int> rangeSum(vector<int> &arr, vector<vector<int>> &queries) {
+    int n = arr.size();
+    vector<int> res;
+    
+    for(auto& query : queries) {
+        int s = query[0]-1, e = query[1]-1;
+        int sum = 0;
+        for(int i = s; i <= e; ++i) {
+            sum += arr[i];
+        }
+        res.push_back(sum);
+    }
+    
+    return res;
+}
+
+
+
+OPTIMAL: TC->O(n) SC->O(n);
+-> Precompute sums in a prefix sum array
+-> for every query the sum = preSum[e+1] -  preSum[s];
+
+
+-------------------------------------------------- OPTMAL CODE --------------------------------------------------
+vector<int> rangeSum(vector<int> &arr, vector<vector<int>> &queries) {
+    int n = arr.size();
+    vector<int> preSum(n+1, 0), res;
+    for(int i = 1; i <= n; ++i) {
+        preSum[i] = preSum[i-1] + arr[i-1];
+    }
+
+    for(auto& query : queries) {
+        int s = query[0]-1, e = query[1]-1;
+        res.push_back(preSum[e+1] - preSum[s]);
+    }
+
+    return res;
+}
+*/
+
+vector<int> rangeSum(vector<int> &arr, vector<vector<int>> &queries) {
+    int n = arr.size();
+    vector<int> preSum(n+1, 0), res;
+    for(int i = 1; i <= n; ++i) {
+        preSum[i] = preSum[i-1] + arr[i-1];
+    }
+
+    for(auto& query : queries) {
+        int s = query[0]-1, e = query[1]-1;
+        res.push_back(preSum[e+1] - preSum[s]);
+    }
+
+    return res;
+}

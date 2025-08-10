@@ -1,0 +1,86 @@
+/*
+
+BRUTE:
+-> for every index, sum all elements after it and see if it sums of target
+
+--------------------------------- BRUTE CODE ---------------------------------
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        int n = nums.size();
+        for(int i = 0; i < n; ++i) {
+            for(int j = i+1; j < n; ++j) {
+                if(nums[i] + nums[j] == target) return {i, j};
+            }
+        }
+        return {-1, -1};
+    }
+};
+
+BETTER: TC->O(nlogn + n) SC->O(n);
+-> hash array elements and indexes
+-> sort the array
+-> take 2 pointers i, j
+    - i: sum < target => i++
+    - j: sum > target => j--
+
+
+--------------------------------- BETTER CODE ---------------------------------
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        int n = nums.size();
+        unordered_map<int,int>;
+        for(int i = 0; i < n; ++i) mp[nums[i]] = i;
+
+        sort(nums.begin(), nums.end());
+        int i = 0, j = n-1;
+        while(i < j) {
+            if(nums[i] + nums[j] == target) return {mp[nums[i]], mp[nums[j]]};
+            
+            if(nums[i]+nums[j] < target) i++;
+            else j--;
+        }
+
+        return {-1, -1};
+    }
+};
+
+
+OPTIMAL: TC->O(n) SC->O(n)
+-> x + y = target, here target is known and by iterating 
+   we can say every element becomes x so equation becomes
+    nums[i] + y = target => y = target - nums[i]
+-> Check for every x if there is a y, i.e. complement using a hash map
+
+
+--------------------------------- OPTIMAL CODE ---------------------------------
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        int n = nums.size();
+        vector<int> ans;
+        unordered_map<int,int> mp;
+
+        for(int i = 0; i < n; i++) {
+            if(mp.find(nums[i]) == mp.end()) {
+                mp[target - nums[i]] = i;
+            } else {
+                ans.push_back(mp[nums[i]]);
+                ans.push_back(i);
+                break;
+            }
+        }
+
+        return ans;
+    }
+};
+
+*/
+
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        
+    }
+};

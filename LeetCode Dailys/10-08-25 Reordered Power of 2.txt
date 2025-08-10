@@ -1,0 +1,46 @@
+----------------------------------- BRUTE -----------------------------------
+-> Generate all permutaions, maximum 9! very managable
+-> for each permutaion without leading 0 check if it is a power of 2.
+
+class Solution {
+private:
+    bool isPowerOfTwo(int x) {
+        return x > 0 && (x & (x - 1)) == 0;
+    }
+public:
+    bool reorderedPowerOf2(int n) {
+        string s = to_string(n);
+        sort(s.begin(), s.end()); // start from sorted to avoid duplicates
+        do {
+            if (s[0] != '0') { // no leading zero
+                int num = stoi(s);
+                if (isPowerOfTwo(num)) return true;
+            }
+        } while (next_permutation(s.begin(), s.end()));
+        return false;
+    }
+};
+
+----------------------------------- OPTIMAL -----------------------------------
+-> the digits of a correct permutation and a power of 2 will be same
+-> precompute all 31 powers of 2 (after that the answer goes above 10^9)
+
+class Solution {
+private:
+    vector<int> countDigits(int num) {
+        vector<int> count(10, 0);
+        while (num > 0) {
+            count[num % 10]++;
+            num /= 10;
+        }
+        return count;
+    }
+public:
+    bool reorderedPowerOf2(int n) {
+        vector<int> countN = countDigits(n);
+        for (int i = 0; i < 31; i++) { // 2^0 to 2^30
+            if (countN == countDigits(1 << i)) return true;
+        }
+        return false;
+    }
+};
