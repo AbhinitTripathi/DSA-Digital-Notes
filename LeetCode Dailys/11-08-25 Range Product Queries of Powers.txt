@@ -1,0 +1,41 @@
+class Solution {
+public:
+    static const int MOD = 1e9 + 7;
+
+    // Modular Exponentiation
+    long long modPow(long long base, long long exp) {
+        long long res = 1;
+        while (exp > 0) {
+            if (exp & 1) res = (res * base) % MOD;
+            base = (base * base) % MOD;
+            exp >>= 1;
+        }
+        return res;
+    }
+
+    vector<int> productQueries(int N, vector<vector<int>>& queries) {
+        vector<int> powers;
+        
+        // Extract powers of two from N
+        for (int i = 0; N > 0; i++) {
+            if ((N & 1) == 1) powers.push_back(1 << i);
+            N >>= 1;
+        }
+
+        // Prefix product with modulo
+        vector<long long> preMult(powers.size() + 1, 1);
+        for (int i = 1; i <= (int)powers.size(); ++i) {
+            preMult[i] = (preMult[i-1] * powers[i-1]) % MOD;
+        }
+
+        // Answer queries
+        vector<int> res;
+        for (auto& query : queries) {
+            int s = query[0], e = query[1];
+            long long product = (preMult[e+1] * modPow(preMult[s], MOD - 2)) % MOD; // modular inverse
+            res.push_back((int)product);
+        }
+
+        return res;
+    }
+};

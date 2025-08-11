@@ -1,0 +1,59 @@
+/*
+
+BRUTE: TC->O(nlogn) SC->O(1)
+-> Just sort the input
+
+class Solution {
+public:
+    void sortColors(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+    }
+};
+
+BETTER: TC->O(2n) SC->O(1)
+-> count 0, 1 & 2
+-> replace the respective in the original array
+
+class Solution {
+public:
+    void sortColors(vector<int>& nums) {
+        int n = nums.size();
+        int c0 = 0, c1 = 0, c2 = 0;
+        for(int el : nums) {
+            if(el == 0) c0++;
+            else if(el == 1) c1++;
+            else c2++;
+        }
+
+        int i = 0;
+        while(c0-- > 0) nums[i++] = 0;
+        while(c1-- > 0) nums[i++] = 1;
+        while(c2-- > 0) nums[i++] = 2;
+    }
+};
+
+OPTIMAL: Dutch National Flag Algorithm: TC->O(n) SC->O(1)
+-> i: Looks at non 0s
+-> j: Looks at 0s and 2s
+-> k: Looks at non 2s
+
+class Solution {
+public:
+    void sortColors(vector<int>& nums) {
+        int n = nums.size();
+        int i = 0, j = 0, k = n-1;
+        while(j <= k) {
+            if(nums[j] == 0) swap(nums[i++], nums[j++]);
+            else if(nums[j] == 2) swap(nums[k--], nums[j]);
+            else j++;
+        }
+    }
+};
+
+*/
+class Solution {
+public:
+    void sortColors(vector<int>& nums) {
+
+    }
+};
