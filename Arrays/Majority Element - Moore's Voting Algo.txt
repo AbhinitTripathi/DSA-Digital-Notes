@@ -1,0 +1,113 @@
+/*
+
+FIRST PRINCIPLES
+- unsorted array
+- +ve and -ve both present
+- count freq of all elements
+- There can only be one number that is majority
+- Majority will take more than n/2 sapce
+
+BRUTE: TC->O(n^2) SC->O(1)
+-> Count frequence of all elements in the array
+-> store the one the has frequency > n/2
+
+class Solution {
+public:
+    int majorityElement(vector<int>& nums) {
+        int n = nums.size();
+        int freq = 0, int res = 0;
+        for(int i = 0; i < n; ++i) {
+            int el = nums[i];
+            freq = 0;
+            for(int j = 0; j < n; ++j) {
+                if(nums[j] == el) freq++;
+            }
+
+            if(freq > n/2) {
+                res = el;
+            }
+        }
+
+        return res;
+    }
+};
+
+
+BETTER 1:
+-> Sort the array then res will be at nums[n/2]
+
+class Solution {
+public: TC->O(nlogn + n) SC->O(1)
+    int majorityElement(vector<int>& nums) {
+        int n = nums.size();
+        sort(nums.begin(), nums.end());
+        int res = nums[n/2];
+
+        int cnt = 0;
+        for(int el : nums) if(res == el) cnt++;
+
+        if(cnt > n/2) return res;
+        return -1;
+    }
+};
+
+
+
+BETTER 2:
+-> Brute force using hashmap
+
+class Solution {
+public: TC->O(n) SC->O(n)
+    int majorityElement(vector<int>& nums) {
+        int n = nums.size();
+        unordered_map<int, int>;
+        for(int el : nums) mp[el]++;
+
+        for(auto& p : mp) {
+            int freq = p.first, num = p.second;
+            if(freq > n/2) return num;
+        }
+    }
+
+    return -1;
+};
+
+OPTIMAL: TC->O(n) SC->O(1)
+-> Moore's Voting Algorithm
+    - There is majority el and non majority el
+    - for every no majority element if we cancel a majority el
+    - the remaining will always be the majority
+
+class Solution {
+public:
+    int majorityElement(vector<int>& nums) {
+        int n = nums.size()
+        int vote = 0;
+        int candidate = 0;
+
+        for(int i = 0; i < n; ++i) {
+            if(vote == 0) {
+                candidate = nums[i];
+                vote = 1;
+            } else if(nums[i] == candidate) {
+                vote++;
+            } else {
+                vote--;
+            }
+        }
+
+        int cnt = 0;
+        for(int el : nums) if(candidate == el) cnt++;
+
+        if(cnt > n/2) return candidate;
+        return -1;
+    }
+};
+
+*/
+class Solution {
+public:
+    int majorityElement(vector<int>& nums) {
+        
+    }
+};

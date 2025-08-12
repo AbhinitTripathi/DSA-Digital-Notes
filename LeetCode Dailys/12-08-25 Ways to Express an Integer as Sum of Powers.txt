@@ -1,0 +1,31 @@
+---------------------------- MEMOIZATION ----------------------------
+
+class Solution {
+private:
+    const int M = 1e9+7;
+    int f(int n, int prev, vector<vector<int>>& dp, const vector<int>& powers) {
+        if (n == 0) return 1;
+        if (n < 0 || prev >= (int)powers.size()) return 0;
+        if (dp[n][prev] != -1) return dp[n][prev];
+
+        long long ways = f(n, prev+1, dp, powers);           // skip current power
+        ways = (ways + f(n - powers[prev], prev+1, dp, powers)) % M; // take it
+
+        return dp[n][prev] = (int)ways;
+    }
+
+public:
+    int numberOfWays(int n, int k) {
+        vector<int> powers;
+        for (int num = 1; ; ++num) {
+            long long p = 1;
+            for (int i = 0; i < k; i++) p *= num;
+            if (p > n) break;
+            powers.push_back((int)p);
+        }
+
+        vector<vector<int>> dp(n+1, vector<int>(powers.size(), -1));
+        return f(n, 0, dp, powers);
+    }
+
+};
