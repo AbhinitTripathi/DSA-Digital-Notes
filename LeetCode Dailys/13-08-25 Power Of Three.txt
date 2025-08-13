@@ -1,0 +1,20 @@
+------------------------ BRUTE ------------------------
+class Solution {
+public:
+    bool isPowerOfThree(int n) {
+        if(n == 1) return true;
+        if(n <= 0 || n % 3 != 0) return false;
+
+        return isPowerOfThree(n/3);
+    }
+};
+
+------------------------ NO RECURSION ------------------------
+class Solution {
+public:
+    bool isPowerOfThree(int n) {
+        int p = log(INT_MAX) / log(3); // Change of base formula
+        int N = pow(3, p);
+        return n>0 && N%n==0;
+    }
+};
