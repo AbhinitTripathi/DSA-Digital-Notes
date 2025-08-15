@@ -1,0 +1,19 @@
+class Solution {
+public:
+    bool isPowerOfFour(int n) {
+        // Condition 1: n must be positive
+        // (No negative numbers or zero can be a power of four)
+        return n > 0 
+        
+            // Condition 2: Check if n is a power of two
+            // n & (n - 1) == 0 means there is only one set bit in n
+            // Example: 8 (1000) & 7 (0111) == 0  → true
+            && !(n & (n - 1))
+            
+            // Condition 3: Check if the only set bit is in an even position
+            // 0x55555555 = 01010101010101010101010101010101 (32-bit)
+            // This mask has 1s in all EVEN bit positions (0, 2, 4, ...)
+            // If n's single 1-bit matches an even position, this AND will be non-zero
+            && (n & 0x55555555);
+    }
+};
