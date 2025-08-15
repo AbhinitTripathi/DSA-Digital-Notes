@@ -1,0 +1,62 @@
+/*
+
+- Given 1 stock with n prices at different days
+
+-> If I buy at ith index then what is the best selling price after it?
+-> If I sell at  ith index then what is the best buying price before it?
+
+BRUTE: TC->O(n^2) SC->O(1)
+-> For every index find the maximum profit that can be achieved by selling at days after it
+
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        int maxProfit = 0;
+        for(int i = 0; i < n; ++i) {
+            for(int j = i; j < n; ++j) {
+                maxProfit = max(maxProfit, prices[j] - prices[i]);
+            }
+        }
+        return maxProfit
+    }
+};
+
+
+OPTIMAL: TC->O(n) SC->O(1);
+-> Traverse from back that way we will know the best selling price
+-> Best selling price = max price after ith index
+
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        int profit = 0, maxSellingPrice = prices[n-1];
+
+        for(int i = n-1; i >= 0; --i) {
+            int buyingPrice = prices[i];
+            profit = max(profit, maxSellingPrice-buyingPrice);
+            maxSellingPrice = max(maxSellingPrice, buyingPrice);
+        }
+        
+        return profit;
+    }
+};
+
+*/
+
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        int profit = 0, maxSellingPrice = prices[n-1];
+
+        for(int i = n-1; i >= 0; --i) {
+            int buyingPrice = prices[i];
+            profit = max(profit, maxSellingPrice-buyingPrice);
+            maxSellingPrice = max(maxSellingPrice, buyingPrice);
+        }
+        
+        return profit;
+    }
+};
