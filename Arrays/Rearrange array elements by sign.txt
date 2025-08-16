@@ -1,0 +1,121 @@
+VARIATION 1:
+/*
+
+- n length array, n is even
+    => n/2 +ve and n/2 -ve
+- [+, -, +, -, +, -]
+- Relative order of same sign elements should be preserved
+
+BRUTE: TC->O(2n) SC->O(n)
+-> Take 2 arrays, pos[](stores +ve el), neg[](stores -ve ele)
+-> Traverse on both array simultaneously then
+    pos el goes to num[2*i];
+    neg el goes to num[2*i+1];
+-
+class Solution {
+public:
+    vector<int> rearrangeArray(vector<int>& nums) {
+        int n = nums.size();
+        
+        // Store +ve and -ve
+        vector<int> pos;
+        vector<int> neg;
+        for(int i = 0; i < n; ++i) {
+            if(nums[i] > 0) pos.push_back(nums[i]);
+            else neg.push_back(nums[i]);
+        }
+
+        // Replace in og array
+        for(int i = 0; i < n/2; ++i) {
+            nums[2*i]   = pos[i];
+            nums[2*i+1] = neg[i];
+        }
+
+        return nums
+    }
+};
+
+OPTIMAL: TC->O(n) SC->O(n)
+-> Take res array to store alternate +ve and -ve
+-> Take 2 pointers pos(0) neg(1)
+-> insert element at their respective pointer and increase pointer by 2
+
+class Solution {
+public:
+    vector<int> rearrangeArray(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> res(n);
+        int pos = 0, neg = 1;
+        for(int i = 0; i < n; ++i) {
+            if(nums[i] > 0) {
+                res[pos] = nums[i];
+                pos += 2;
+            } else {
+                res[neg] = nums[i];
+                neg += 2;
+            }
+        }
+        return res;
+    }
+};
+
+*/
+
+
+
+VARIATION 2:
+/*
+- n length array
+- [+, -, +, -, +, -,(+,+,+)/(-,-,-)]
+- Relative order of same sign elements should be preserved
+
+OPTIMAL: TC->O(2n) SC->O(n)
+-> Take 2 arrays, pos[](stores +ve el), neg[](stores -ve ele)
+-> Traverse on both array simultaneously then
+    pos el goes to num[2*i];
+    neg el goes to num[2*i+1];
+-
+class Solution {
+public:
+    vector<int> rearrangeArray(vector<int>& nums) {
+        int n = nums.size();
+        
+        // Store +ve and -ve
+        vector<int> pos;
+        vector<int> neg;
+        for(int i = 0; i < n; ++i) {
+            if(nums[i] > 0) pos.push_back(nums[i]);
+            else neg.push_back(nums[i]);
+        }
+
+        // Replace in og array
+        if(pos.size() < neg.size()) {
+            int size = pos.size();
+            for(int i = 0; i < size; ++i) {
+                nums[2*i]   = pos[i];
+                nums[2*i+1] = neg[i];
+            }
+
+            int ind = 2*size;
+            for(int i = size; i < neg.size(); ++i) {
+                nums[ind] = neg[i];
+                ind++;
+            }
+        } else {
+            int size = neg.size();
+            for(int i = 0; i < size; ++i) {
+                nums[2*i]   = pos[i];
+                nums[2*i+1] = neg[i];
+            }
+
+            int ind = 2*size;
+            for(int i = size; i < pos.size(); ++i) {
+                nums[ind] = pos[i];
+                ind++;
+            }
+        }
+
+        return nums;
+    }
+};
+*/
