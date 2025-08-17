@@ -1,0 +1,71 @@
+/*
+
+- TLE but things to notice
+- Everything after K is a base case
+- Everything between K and N is the base case that returns 1.0;
+- Everything beyond K is the base case thet return 0.0;
+- So the array might look like this
+
+_ _ _ _ _ 1 1 1 1 1 0 0 0 0
+          k       n
+
+- We just need to compute the remaining index prob,
+  that we can do keeping a Sliding Window that moves from right
+
+*/
+
+BRUTE: TC -> O(n^2)  SC -> O(n^2) + O(n) recursion
+class Solution {
+public:
+    double f( int n, int k, int points, int maxPts, vector<double>& dp) {
+        // Base cases
+        if (points >= k) {
+            return points <= n ? 1.0 : 0.0; 
+        }
+        if (dp[points] != -1) return dp[points];
+
+        double ans = 0.0;
+        for (int i = 1; i <= maxPts; i++) {
+            ans += f(n,k,points + i,maxPts,dp);
+        }
+        ans /= maxPts;
+
+        return dp[points] = ans;
+    }
+
+    double new21Game(int n, int k, int maxPts) {
+        vector<double> dp(n+1, -1);
+        return f(n,k,0,maxPts,dp);
+    }
+};
+
+OPTIMAL (using sliding window)
+class Solution {
+public:
+    double new21Game(int n, int k, int maxPts) {
+        vector<double> dp(n+1, 0);
+        // base cases: when points >= k
+        for (int i = k; i <= n; ++i) {
+            dp[i] = 1.0;
+        }
+
+        double window_sum = 0.0;
+        // initial window = dp[k .. k+maxPts-1]
+        for (int i = k; i <= min(n, k + maxPts - 1); i++) {
+            window_sum += dp[i];
+        }
+
+        // fill dp backwards
+        for (int i = k - 1; i >= 0; i--) {
+            dp[i] = window_sum / maxPts;
+
+            // slide window: add dp[i], remove dp[i+maxPts]
+            window_sum += dp[i];
+            if (i + maxPts <= n) {
+                window_sum -= dp[i + maxPts];
+            }
+        }
+
+        return dp[0];
+    }
+};
