@@ -1,0 +1,51 @@
+/*
+
+- Array represents a permutation
+- Next permutation will be the smallest permutation greater than current
+- If I want to make the next greater number in maths, I look at the lest significatn digits
+
+BRUTE: TC->O(n!) SC->O(n!);
+-> Generate all factorials and sort in increasing order
+-> Search for current permutation then return the next one
+
+OPTIMAL: TC->O(n) SC->O(1);
+-> Find the number to be swapped **ind**, i.e. nums[i-1] < nums[i] then num at i-1;
+-> Find the number to swap with, first greater element than nums[ind] from the right
+-> Reverse everything after selected index
+
+*/
+
+class Solution {
+public:
+    void nextPermutation(vector<int>& nums) {
+        int n = nums.size();
+        int ind = -1;
+        // Find Selected ind
+        for(int i = n-1; i > 0; --i) {
+            if(nums[i-1] < nums[i]) {
+                ind = i-1;
+                break;
+            }
+        }
+
+        // If none select => last permutation i.e. descending order
+        // Return asccentding
+        // [4,3,2,1] -> [1,2,3,4]
+        if(ind == -1) {
+            reverse(nums.begin(), nums.end());
+            return;
+        }
+
+        // find index to swap with
+        // first greater element than nums[ind] from the right
+        for(int j = n-1; j >= ind; --j) {
+            if(nums[j] > nums[ind]) {
+                swap(nums[j], nums[ind]);
+                break;
+            }
+        }
+
+        // reverse array from ind+1 till end
+        reverse(nums.begin() + ind + 1, nums.end());
+    }
+};
