@@ -4,9 +4,50 @@
 - Next permutation will be the smallest permutation greater than current
 - If I want to make the next greater number in maths, I look at the lest significatn digits
 
-BRUTE: TC->O(n!) SC->O(n!);
+****OBSERVATION****
+i)   In dictionary order the next elements tend to have the longest common prefix.
+	e.g. abcda -> abcdb (abcd is same)
+ii)  Since nos. after the breakpoint are in non increasing order we can fet the upper bound from back
+iii) Elements after breakopint are bigger->smaller, if they were smaller->bigger, we would get lexicographically smallest
+
+BRUTE: TC->O(2n! + n!log(n!)) SC->O(n!);
 -> Generate all factorials and sort in increasing order
 -> Search for current permutation then return the next one
+
+void generatePermutations(vector<int>& nums, int index, vector<vector<int>>& result) {
+    if (index == nums.size()) {
+        result.push_back(nums);
+        return;
+    }
+    for (int i = index; i < nums.size(); i++) {
+        swap(nums[index], nums[i]);
+        generatePermutations(nums, index + 1, result);
+        swap(nums[index], nums[i]); // backtrack
+    }
+}
+
+vector<int> nextPermutationBruteForce(vector<int>& nums) {
+    vector<vector<int>> perms;
+
+    // Generate all permutations recursively
+    generatePermutations(nums, 0, perms);
+
+    // Sort them in lexicographical order
+    sort(perms.begin(), perms.end());
+
+    // Find the current permutation
+    for (int i = 0; i < perms.size(); i++) {
+        if (perms[i] == nums) {
+            // If it's the last, wrap to the first
+            if (i == perms.size() - 1) return perms[0];
+            else return perms[i + 1];
+        }
+    }
+
+    // Should never reach here
+    return nums;
+}
+
 
 OPTIMAL: TC->O(n) SC->O(1);
 -> Find the number to be swapped **ind**, i.e. nums[i-1] < nums[i] then num at i-1;
