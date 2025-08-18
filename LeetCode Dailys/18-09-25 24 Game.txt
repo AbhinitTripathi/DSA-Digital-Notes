@@ -1,0 +1,57 @@
+class Solution {
+
+// Espilon: small +ve integer to check precision errors in floats
+const double esp = 1e-6;
+
+private:
+    bool f(vector<double>& cards) {
+        if(cards.size() == 1) {
+            return abs(cards[0] - 24) <= esp;
+        }
+
+        // Pick two possible numbers;
+        for(int i = 0; i < cards.size(); ++i) {
+            for(int j = 0; j < cards.size(); ++j) {
+                // Do not take same numbers and do operation
+                if(i == j) continue;
+
+                // Make new array of n-1 elements (2 will get used and give 1 new el)
+                vector<double> new_cards;
+                for(int k = 0; k < cards.size(); ++k) {
+                    if(k == i || k == j) continue;
+                    new_cards.push_back(cards[k]);
+                }
+
+                // Store all possible operations with a and b
+                // {a+b, a-b, b-a, a*b, a/b, b/a} constant space of 6
+                double a = cards[i], b = cards[j];
+                vector<double> operations = {a+b, a-b, b-a, a*b};
+                // a or b can be 0 then b/a and a/b will give division by 0 error
+                if(abs(a) > 0.0) operations.push_back(b/a);
+                if(abs(b) > 0.0) operations.push_back(a/b);
+
+                // Call recursion for all operations
+                for(int i = 0; i < operations.size(); ++i) {
+                    new_cards.push_back(operations[i]);
+                    if(f(new_cards)) return true;
+                    new_cards.pop_back();
+                }
+            }
+        }
+
+        return false;
+    }
+
+public:
+    bool judgePoint24(vector<int>& cards) {
+        vector<double> temp;
+        int n = cards.size();
+        
+        // Convert numbers in decimal system for calc
+        for(int i = 0; i < 4; ++i) {
+            temp.push_back(1.0 * cards[i]);
+        }
+
+        return f(temp);
+    }
+};
