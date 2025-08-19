@@ -1,0 +1,28 @@
+/*
+
+- Keep a window with all 0s
+- no. of valid subarrays ending at index r = r-l+1
+    eg: [0,0,0] then the subarrays ending at r are [0,0,0][0,0][0] i.e. 3
+             r
+    so we can add it to the answer.
+
+*/
+class Solution {
+public:
+    long long zeroFilledSubarray(vector<int>& nums) {
+        int n = nums.size();
+        long long ans = 0;
+        int l = 0, r = 0;
+        while(r < n) {
+            while(r < n && nums[r] != 0) {
+                r++;
+                l=r;
+            }
+
+            if(r < n) ans += (r - l + 1);
+            r++;
+        }
+
+        return ans;
+    }
+};
