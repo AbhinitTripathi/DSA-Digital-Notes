@@ -1,0 +1,119 @@
+/*
+
+BRUTE: TC->O(n*m + n^2*m + m^2*n) SC->O(2k) k=no. of zeroes
+-> Store in what row/columns were the 0s in originally
+-> traverese in matrix, if we get a 0 that was originally there(check using set)
+    - mark the entire row & col as 0
+
+class Solution {
+private:
+    void setRowsToZero(vector<vector<int>>& matrix, int row, int m) {
+        for(int col = 0; col < m; ++col) {
+            matrix[row][col] = 0;
+        }
+    }
+    
+    void setColsToZero(vector<vector<int>>& matrix, int col, int n) {
+        for(int row = 0; row < n; ++row) {
+            matrix[row][col] = 0;
+        }
+    }
+public:
+    void setZeroes(vector<vector<int>>& matrix) {
+        int n = matrix.size();
+        int m = matrix[0].size();
+        unordered_set<int> rowHash, colHash;
+
+        for(int i = 0; i < n; ++i) {
+            for(int j = 0; j < m; ++j) {
+                if(matrix[i][j] == 0) {
+                    rowHash.insert(i);
+                    colHash.insert(j);
+                }
+            }
+        }
+
+        for(int i = 0; i < n; ++i) {
+            for(int j = 0; j < m; ++j) {
+                if(rowHash.count(i)>0 && colHash.count(j)>0) {
+                    setRowsToZero(matrix, i, m);
+                    setColsToZero(matrix, j, n);
+                }
+            }
+        }
+    }
+};
+
+
+BETTER: TC->O(n*m) SC->O(n+m);
+-> We can say that a cell {i, j} will be 0 is there is a 0 in either ith row or jth col
+-> Use the row/column hash to check is current cells needs to be 0 and make it 0
+
+class Solution {
+public:
+    void setZeroes(vector<vector<int>>& matrix) {
+        int n = matrix.size();
+        int m = matrix[0].size();
+        vector<int> rowHash(n, 0), colHash(m,0);
+
+        for(int i = 0; i < n; ++i) {
+            for(int j = 0; j < m; ++j) {
+                if(matrix[i][j] == 0) {
+                    rowHash[i] = 1;
+                    colHash[j] = 1;
+                }
+            }
+        }
+
+        for(int i = 0; i < n; ++i) {
+            for(int j = 0; j < m; ++j) {
+                if(rowHash[i]==1 || colHash[j]==1) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+    }
+};
+
+OPTIMAL: TC->O(n^2) SC->O(1);
+-> We need space to store the hash, use the 1st row and the 1st column as hash  row/col respectively
+-> {0, 0} will have an overlap so we can use a variable and c0 for the 0th column
+-> mark 0s in the similar fashion as in the hash set
+-> traverse and update from back so we don't tamper the hash first
+
+class Solution {
+public:
+    void setZeroes(vector<vector<int>>& matrix) {
+        int n = matrix.size();
+        int m = matrix[0].size();
+
+        int c0 = 1;  // flag for col0
+
+        // pass 1: mark row0 and col0
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if(j == 0 && matrix[i][j] == 0) {
+                    c0 = 0;
+                } else if (matrix[i][j] == 0) {
+                    matrix[i][0] = 0;  // mark row
+                    matrix[0][j] = 0;  // mark col
+                }
+            }
+        }
+
+        // pass 2: fill rest (bottom-up, right-to-left)
+        for (int i = n - 1; i >= 0; i--) {
+            for (int j = m - 1; j >= 0; j--) {
+                if(j==0) {
+                    if(matrix[i][0]==0 || c0==0) {
+                        matrix[i][j] = 0;
+                    }
+                }
+                else if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+    }
+};
+*/
