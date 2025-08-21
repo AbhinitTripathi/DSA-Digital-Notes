@@ -1,0 +1,33 @@
+class Solution {
+public:
+    int numSubmat(vector<vector<int>>& mat) {
+        int n = mat.size();
+        int m = mat[0].size();
+        for(int i = 0; i < n; ++i) {
+            int consec_right = 0;
+            for(int j = m-1; j >= 0; --j) {
+                if(mat[i][j] == 0) {
+                    consec_right = 0;
+                    continue;
+                }
+                mat[i][j] = ++consec_right;
+            }
+        }
+
+        int count = 0;
+        for(int i = 0; i < n; ++i) {
+            for(int j = 0; j < m; ++j) {
+                if(mat[i][j] == 0) continue;
+                
+                int mini = mat[i][j];
+                count += mini;
+                for(int k = i+1; k < n; ++k) {
+                    mini = min(mini, mat[k][j]);
+                    count += mini;
+                }
+            }
+        }
+
+        return count;
+    }
+};

@@ -1,0 +1,91 @@
+/*
+
+- Unsorted, Repeating, Integers array
+- Return longest Consecutive Sequence of numbers form the entire array
+- Consecutive elements have a difference of 1
+
+BRUTE: TC->O(n^3) SC->O(1)
+-> Stand at every element and consider it the satrting point
+-> We are finding the next (el + 1) till we do not get the next number
+-> Calculate the length at the end
+
+class Solution {
+private:
+    bool elementExistsInArray(int x, vector<int>& nums) {
+        for(int num : nums) {
+            if(x == num) return true;
+        }
+        return false;
+    }
+public:
+    int longestConsecutive(vector<int>& nums) {
+        int max_length = 0;
+        for(int num : nums) {
+            int el = num+1, curr_length = 1;
+            while(elementExistsInArray(el, nums)) {
+                el++;
+                curr_length++;
+            }
+            max_length = max(max_length, curr_length);
+        }
+        return max_length;
+    }
+};
+
+BETTER: TC->O(nlogn + n) SC->O(1)
+=> Sort the array
+-> Skip if curr == last, increase length if cur == last + 1, reset length to = 1 otherwise
+
+class Solution {
+public:
+    int longestConsecutive(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        int max_langth = 1, curr_length = 1;
+        
+        for(int i = 1; i < n; ++i) {
+            if(nums[i] == nums[i-1]) {
+                continue;
+            } else if(nums[i] == nums[i-1] + 1) {
+                curr_length++;
+                max_length = max(max_length, curr_length);
+            } else {
+                curr_length = 1;
+            }
+        }
+        
+        return max_length;
+    }
+};
+
+OPTIMAL:
+-> Insert everything in a set
+-> Traverse in the set ans:
+    - if currenet elemnt is not the starting on a seq, skip it
+    - If current element is the starting point of a sequence, then do what we did in brute
+    - Update max_length
+-> return
+
+class Solution {
+public:
+    int longestConsecutive(vector<int>& nums) {
+        unordered_set<int> st;
+        for(int num : nums) st.insert(num);
+
+        int curr_length = 0, max_length = 0;
+        for(auto& num : st) {
+            if(st.count(num - 1) > 0) continue;
+            
+            int seq = num;
+            curr_length = 0;
+            while(st.count(seq) > 0) {
+                curr_length++;
+                seq++;
+            }
+            max_length = max(max_length, curr_length);
+        }
+
+        return max_length;
+    }
+};
+
+*/
