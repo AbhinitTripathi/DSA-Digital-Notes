@@ -1,0 +1,30 @@
+class Solution {
+public:
+    int minimumArea(vector<vector<int>>& grid) {
+        int n = grid.size();
+        int m = grid[0].size();
+
+        int l=-1, r=-1, t=-1, b=-1;
+
+        // Find the top-most, bottom-most, left-most, right-most 1s
+        for(int i = 0; i < n; ++i) {
+            for(int j = 0; j < m; ++j) {
+                if(grid[i][j] == 1) {
+                    // Top-Bottom
+                    b = i;
+                    if(t == -1) t = i;
+
+                    // Left-Right
+                    r = max(r, j);
+                    if(l == -1) l = j;
+                    l = min(l, j);
+                }
+            }
+        }
+
+        int length  = r-l+1;
+        int breadth = b-t+1;
+
+        return length * breadth;
+    }
+};
