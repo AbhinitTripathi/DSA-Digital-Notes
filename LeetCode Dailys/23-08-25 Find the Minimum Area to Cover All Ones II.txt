@@ -1,0 +1,58 @@
+class Solution {
+public:
+    int m, n;
+    vector<vector<int>> grid;
+    map<tuple<int,int,int,int,int>, int> memo;
+
+    int minimumSum(vector<vector<int>>& g) {
+        grid = g;
+        m = g.size();
+        n = g[0].size();
+        return solve(0, 0, m-1, n-1, 3);
+    }
+
+    int solve(int x1, int y1, int x2, int y2, int k) {
+        auto key = make_tuple(x1,y1,x2,y2,k);
+        if (memo.count(key)) return memo[key];
+
+        // get bounding box of 1's
+        int minX = m, minY = n, maxX = -1, maxY = -1;
+        for (int i = x1; i <= x2; i++) {
+            for (int j = y1; j <= y2; j++) {
+                if (grid[i][j] == 1) {
+                    minX = min(minX, i);
+                    minY = min(minY, j);
+                    maxX = max(maxX, i);
+                    maxY = max(maxY, j);
+                }
+            }
+        }
+        // no 1's in this subgrid
+        if (maxX == -1) return 0;
+
+        // if only 1 rectangle allowed → bounding box area
+        if (k == 1) return (maxX - minX + 1) * (maxY - minY + 1);
+
+        int ans = INT_MAX;
+
+        // try horizontal cuts
+        for (int mid = x1; mid < x2; mid++) {
+            for (int cut = 1; cut < k; cut++) {
+                int top = solve(x1, y1, mid, y2, cut);
+                int bottom = solve(mid+1, y1, x2, y2, k-cut);
+                ans = min(ans, top + bottom);
+            }
+        }
+
+        // try vertical cuts
+        for (int mid = y1; mid < y2; mid++) {
+            for (int cut = 1; cut < k; cut++) {
+                int left = solve(x1, y1, x2, mid, cut);
+                int right = solve(x1, mid+1, x2, y2, k-cut);
+                ans = min(ans, left + right);
+            }
+        }
+
+        return memo[key] = ans;
+    }
+};
