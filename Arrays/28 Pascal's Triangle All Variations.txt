@@ -1,0 +1,30 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+void makePascalsTraingle(vector<vector<int>>& pascals_triangle, int n) {
+    pascals_triangle.push_back({1});
+    
+    for(int i = 1; i < n; ++i) {
+        vector<int> row(i+1, 1);
+        for(int j = 1; j < n-1; ++j) {
+            row[j] = pascals_triangle[i-1][j] + pascals_triangle[i-1][j-1];
+        }
+        pascals_triangle.push_back(row);
+    }
+}
+
+int main() {
+    int n;
+    cin >> n;
+    
+    vector<vector<int>> pascals_triangle;
+    makePascalsTraingle(pascals_triangle, n);
+    
+    for(int i = 0; i < n; ++i) {
+        int m = pascals_triangle[i].size();
+        for(int j = 0; j < m; ++j) {
+            cout << pascals_triangle[i][j] << ' ';
+        }
+        cout << endl;
+    }
+}
