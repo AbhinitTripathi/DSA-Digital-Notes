@@ -1,3 +1,4 @@
+PRINT ENTIRE TRIANGLE
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -28,3 +29,45 @@ int main() {
         cout << endl;
     }
 }
+
+
+GIVE Nth ROW
+class Solution {
+private:
+    int nCr(int n, int r) {
+        long long res = 1;
+
+        for (int i = 0; i < r; ++i) {
+            res *= (n - i);
+            res /= (i + 1);
+        }
+
+        return res;
+    }
+public:
+    vector<int> getRow(int rowIndex) {
+        int n = rowIndex+1;
+        vector<int> res(n);
+        for (int i = 0; i <= (rowIndex/2); ++i) {
+            int el = nCr(rowIndex, i);
+            res[i] = res[n-i-1] = el;
+        }
+        return res;
+    }
+};
+
+
+GIVE EL AT Nth row and Rth COLUMN
+class Solution {
+private:
+    int nCr(int n, int r) {
+        long long res = 1;
+
+        for (int i = 0; i < r; ++i) {
+            res *= (n - i);
+            res /= (i + 1);
+        }
+
+        return res;
+    }
+};
