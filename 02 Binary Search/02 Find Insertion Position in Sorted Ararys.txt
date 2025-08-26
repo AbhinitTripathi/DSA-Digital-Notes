@@ -1,0 +1,43 @@
+/*
+
+- Sorted and distinct
+- We need to find 1st el >= target => lb
+
+BRUTE: TC->O(n) SC->O(1);
+- Linear Search
+
+class Solution {
+public:
+    int searchInsert(vector<int>& nums, int target) {
+        int n = nums.size();
+        for (int i = 0; i < n; ++i) {
+            if (nums[i] >= target) {
+                return i;
+            }
+        }
+
+        return n;
+    }
+};
+
+OPTIMAL: TC->O(logn) SC->O(1)
+- Binary Search
+
+class Solution {
+public:
+    int searchInsert(vector<int>& nums, int target) {
+        int n = nums.size();
+        int l = 0, h = n-1;
+        while (l <= h) {
+            int m = (l + h) / 2;
+            if (nums[m] >= target) {
+                h = m - 1;
+            } else {
+                l = m + 1;
+            }
+        }
+        return l;
+    }
+};
+*/
+
