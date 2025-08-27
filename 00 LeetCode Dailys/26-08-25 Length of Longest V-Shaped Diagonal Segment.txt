@@ -1,0 +1,57 @@
+class Solution {
+private:
+    // Clockwise Directions: TL, TR, BR, BL
+    const vector<pair<int,int>> dirs = {{-1,-1}, {-1,1}, {1,1}, {1,-1}};
+    int dp[501][501][4][2];  
+    // r, c, direction (0..3), can_turn (0/1)
+
+    int f(vector<vector<int>>& grid, int r, int c, int dir, bool can_turn, int target) {
+        int n = grid.size(), m = grid[0].size();
+
+        // out of bounds or wrong cell
+        if (r < 0 || r >= n || c < 0 || c >= m || grid[r][c] != target) 
+            return 0;
+
+        int &res = dp[r][c][dir][can_turn];
+        if (res != -1) return res;
+
+        res = 0;
+        int next_target = (target == 2 ? 0 : 2);
+
+        // 1. Continue straight
+        auto [dr, dc] = dirs[dir];
+        res = max(res, 1 + f(grid, r + dr, c + dc, dir, can_turn, next_target));
+
+        // 2. Turn once (if allowed)
+        if (can_turn) {
+            int new_dir = (dir + 1) % 4;  // clockwise turn
+            auto [dr2, dc2] = dirs[new_dir];
+            res = max(res, 1 + f(grid, r + dr2, c + dc2, new_dir, 0, next_target));
+        }
+
+        return res;
+    }
+
+public:
+    int lenOfVDiagonal(vector<vector<int>>& grid) {
+        int n = grid.size(), m = grid[0].size();
+        memset(dp, -1, sizeof(dp));
+
+        int res = 0;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
+                if (grid[i][j] == 1) {
+                    // try starting in all 4 directions
+                    for (int k = 0; k < 4; ++k) {
+                        auto [dr, dc] = dirs[k];
+                        int nr = i + dr, nc = j + dc;
+                        res = max(res, 1 + f(grid, nr, nc, k, 1, 2));
+                        // "+1" accounts for the starting vertex cell (the 1)
+                    }
+                }
+            }
+        }
+
+        return res;
+    }
+};
