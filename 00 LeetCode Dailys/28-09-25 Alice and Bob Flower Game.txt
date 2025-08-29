@@ -1,0 +1,38 @@
+/*
+
+- Alice goes first 
+- At each turn the player chooses 1 lane & plucks 1 flower from it
+    => no. of rounds = no. of flowers
+- If no flowers left, then last player to pluck wins
+    => For Alice to win, no. of rounds must be odd
+-
+*/
+class Solution {
+public:
+    long long flowerGame(int n, int m) {
+        long long pair_count = 0;
+        // Sum of x + y should be odd
+        // Odd sums appears when adding (ODD + EVEN) | (EVEN + ODD)
+        int even_count = m / 2;
+        int odd_count  = m - even_count;
+        for (int x = 1; x <= n; ++x) {
+            if (x & 1) {
+                pair_count += even_count;
+            } else {
+                pair_count += odd_count;
+            }
+        }
+
+        return pair_count;
+
+        /*
+        TC->O(1)
+        -> number of odd in x * number of evens in y + number of even in x * number of odds in y
+        int y_even_count = m / 2;
+        int y_odd_count  = m - y_even_count;
+        int x_even_count = n / 2;
+        int x_odd_count  = n - x_even_count;
+        return 1LL * x_odd_count * y_even_count + 1LL * x_even_count * y_odd_count;
+        */
+    }
+};
