@@ -1,0 +1,27 @@
+class Solution {
+private:
+    bool validCell(vector<vector<char>>& board, int r, int c) {
+        char el = board[r][c];
+        int cnt = 0;
+        for (int i = 0; i < 9; ++i) {
+            int sb_row = 3 * (r / 3) + i / 3;
+            int sb_col = 3 * (c / 3) + i % 3;
+            if (board[i][c] == el) cnt++;
+            if (board[r][i] == el) cnt++;
+            if (board[sb_row][sb_col] == el) cnt++;
+        }
+        return cnt == 3;
+    }
+public:
+    bool isValidSudoku(vector<vector<char>>& board) {
+        for (int i = 0; i < 9; ++i) {
+            for (int j = 0; j < 9; ++j) {
+                if (board[i][j] != '.') {
+                    if (!validCell(board, i, j))
+                        return false;
+                }
+            }
+        }
+        return true;
+    }
+};
