@@ -1,0 +1,55 @@
+/*
+- As we add students to a single class,
+  the effective change in pass ratio of each class becomes smaller
+- Since hte change in pass ratio is decreasing 
+    => the 1st change will give the maximum change in pass ratio
+- We want to put 1 student where the effective pass ratio will be greater
+    => Use a PQ to track the maximum delta where:
+        delta = change in current pass ratio and pass ratio after adding 1 student
+        delta = pr_after_adding_1 - curr_pr
+*/
+
+class Solution {
+#define P pair<double, int>
+private:
+    // function to find delta i.e. change in current pass ratio and pass ratio after adding 1 student
+    void update_delta(vector<vector<int>>& classes, int ind, priority_queue<P>& delta) {
+        int passing_students = classes[ind][0], total_students = classes[ind][1];
+        // Pass Ratio Of Class = passing_students / total_students
+        double current_pr = (double) passing_students / total_students;
+        // Pass Ratio If We add 1 Student = (passing_students+1) / (total_students+1)
+        double pr_after_adding_1 = (double) (passing_students+1) / (total_students+1);
+        // Change/Gain in current pass ratio and pass ratio after adding 1 student
+        double curr_delta = pr_after_adding_1 - current_pr;
+        // PQ will keep the maximum gain on top
+        delta.push({ curr_delta, ind });
+    }
+public:
+    double maxAverageRatio(vector<vector<int>>& classes, int extraStudents) {
+        int n = classes.size();
+        priority_queue<P> delta; // stores the { maximum difference of pass ratio, ind on top }
+
+        // Store initial Pass ratios in pq
+        for (int i = 0; i < n; ++i) {
+            update_delta(classes, i, delta);
+        }
+
+        // At each iteration assign 1 student to a class
+        while (extraStudents--) {
+            // Assign student to the class with highest deta i.e. gain
+            auto [_, class_ind] = delta.top(); delta.pop();
+            classes[class_ind][0]++;
+            classes[class_ind][1]++;
+
+            update_delta(classes, class_ind, delta);
+        }
+
+        double result = 0.0;
+        // result = ∑(Pass Ratio Of Each Class) / Total Classes
+        for (auto &curr_class : classes) {
+            result += (double) curr_class[0] / curr_class[1];
+        }
+
+        return result/n;
+    }
+};
