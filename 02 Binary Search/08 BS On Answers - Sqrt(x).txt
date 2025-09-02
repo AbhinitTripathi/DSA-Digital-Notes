@@ -1,0 +1,59 @@
+/*
+- We need to return the closest perfect square root
+
+BRUTE: TC->O(x) | SC->O(1)
+- Do a linear search from i = 1 -> x and check if i*i <= x then it can be a possible answer
+class Solution {
+public:
+    int mySqrt(int x) {
+        for (int i = x; i >= 1; --i) {
+            if (i*i <= x)
+                return i;
+        }
+        return -1;
+    }
+};
+
+OPTIMAL: TC->O(logx) SC->O(1)
+- Binary Seach on answer space -> i * i <= x
+class Solution {
+public:
+    int mySqrt(int x) {
+        // l -> can't be less than 1
+        // h -> doesn't make sense to be greater than x
+        int l = 1, h = x;
+        
+        while (l <= h) {
+            int m = l + (h - l) / 2;
+            // m * m -> calculates in integer => overflow
+            // 1LL (1 in long long) * m * m -> calc in long long => no overflow
+            if (1LL * m * m <= x) {
+                l = m + 1;
+            } else {
+                h = m - 1;
+            }
+        }
+
+        return h;
+    }
+};
+*/
+class Solution {
+public:
+    int mySqrt(int x) {
+        int l = 1, h = x;
+        
+        while (l <= h) {
+            int m = l + (h - l) / 2;
+            // m * m -> calculates in integer => overflow
+            // 1LL (1 in long long) * m * m -> calc in long long => no overflow
+            if (1LL * m * m <= x) {
+                l = m + 1;
+            } else {
+                h = m - 1;
+            }
+        }
+
+        return h;
+    }
+};
