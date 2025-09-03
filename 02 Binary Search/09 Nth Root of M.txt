@@ -1,0 +1,112 @@
+/*
+BRUTE: TC ~ O(n*m) | SC ~ O(1)
+- Complete Search, We need to find x such that x^n = m;
+- For all xs in the range [1, m] multiply it n times
+    - if res == m then you found x
+    - if res > m no x possible
+class Solution {
+  public:
+    int nthRoot(int n, int m) {
+        for (int x = 1; x <= m; ++x) {
+            long long res = 1;
+            for (int t = 1; t <= n; ++t) {
+                // Oreserflow Check
+                if (res <= INT_MAX)
+                    res *= x;
+                else 
+                    break;
+            }
+            if (res == m)
+                return x;
+            if (res > m)
+                break;
+        }
+        return -1;
+    }
+};
+
+--------------------------------------------------
+
+BETTER: TC ~ O(nlogm) | SC ~ O(1)
+- We can optimize the searching with Binary Search on x itself
+class Solution {
+  private:
+    long long multiply_n_times(int x, int n) {
+        long long res = 1;
+        for (int t = 1; t <= n; ++t) {
+            // Overflow Check
+            if (res <= INT_MAX)
+                res *= x;
+            else 
+                break;
+        }
+        return res;
+    }
+  public:
+    int nthRoot(int n, int m) {
+        
+        int low = 1, high = m;
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            long long mid_pow_n = multiply_n_times(mid, n);
+            if (mid_pow_n == m)
+                return mid;
+            else if (mid_pow_n < m)
+                low  = mid + 1;
+            else 
+                high = mid - 1;
+        }
+        
+        return -1;
+    }
+};
+
+--------------------------------------------------
+
+OPTIMAL: TC ~ O(log(m + n)) | SC ~ O(1)
+- We can further optimize how we compute x^n
+- It can be optimized By using Binary Exponentitation
+class Solution {
+  private:
+    // Iterative Binary Exponentiation
+    long long multiply_n_times_be(int x, int n) {
+        long long ans = 1;
+        while (n) {
+            if (n & 1)
+                ans *= x;
+            x *= x;
+            n >>= 1;
+        }
+        return ans;
+    }
+  public:
+    int nthRoot(int n, int m) {
+        
+        int low = 1, high = m;
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            long long mid_pow_n = multiply_n_times_be(mid, n);
+            if (mid_pow_n == m)
+                return mid;
+            else if (mid_pow_n < m)
+                low  = mid + 1;
+            else 
+                high = mid - 1;
+        }
+        
+        return -1;
+    }
+};
+
+BONUS: 
+- Mathematical observation
+- Error Prone due to double imprecision
+class Solution {
+  public:
+    int nthRoot(int n, int m) {
+        if (n == 1) return m;
+        double x = log2(m) / log2(n);
+        return x == (int) x ? (int) x : -1;
+    }
+};
+*/
