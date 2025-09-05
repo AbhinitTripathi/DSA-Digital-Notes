@@ -1,0 +1,13 @@
+class Solution {
+public:
+    int makeTheIntegerZero(int num1, int num2) {
+        for (int k = 1; k <= 60; ++k) {
+            long long curr = num1 - 1LL * k * num2;
+            if (curr < 0) continue; // can't represent negative with powers of two
+            int set_bits_in_curr = __builtin_popcountll(curr);
+            if (set_bits_in_curr <= k && curr >= k)
+                return k;
+        }
+        return -1;
+    }
+};
