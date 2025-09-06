@@ -1,0 +1,98 @@
+/*
+- 'n' piles of bananas.
+- [2,5,3,4] -> 1st pile has 5 bananas.
+- k = number of bananas KOKO can eat in 1 hour.
+- We need to optimize k.
+
+BRUTE: TC ~ O(n + (max_plie * n)) | SC ~ O(1)
+- For every k:
+    - Check if it is possible to eat all the bananas.
+- koko_can_eat(piles, speed, hours)
+    - time_taken = ∑ ceil(piles[i] / speed) | ∀ i -> [0, n)
+    - if time_taken <= h then kok can eat
+
+class Solution {
+private:
+    bool koko_can_eat(vector<int> &piles, int k, int h) {
+        int time_taken = 0;
+        for (int i = 0, n = piles.size(); i < n; ++i) {
+            time_taken += (piles[i] / k);
+            if (piles[i] % k != 0)
+                time_taken++;
+        }
+        return time_taken <= h;
+    }
+public:
+    int minEatingSpeed(vector<int>& piles, int h) {
+        int max_pile = *max_element(piles.begin(), piles.end());
+        
+        for (int k = 1; k <= max_pile; ++k) {
+            if (koko_can_eat(piles, k, h))
+                return k;
+        }
+
+        return -1;
+    }
+};
+
+OPTIMAL: TC ~ O(n + n * max_el) | SC ~ O(1)
+- Find k using binary search
+
+class Solution {
+private:
+    bool koko_can_eat(vector<int> &piles, int k, int h) {
+        int time_taken = 0;
+        for (int i = 0, n = piles.size(); i < n; ++i) {
+            time_taken += (piles[i] / k);
+            if (piles[i] % k != 0)
+                time_taken++;
+        }
+        return time_taken <= h;
+    }
+public:
+    int minEatingSpeed(vector<int>& piles, int hours) {
+        int l = 1, h = *max_element(piles.begin(), piles.end());
+        
+        while (l <= h) {
+            int m = l + (h - l) / 2;
+
+            if (koko_can_eat(piles, m, hours)) {
+                h = m - 1;
+            } else {
+                l = m + 1;
+            }
+        }
+
+        return l;
+    }
+};
+*/
+
+class Solution {
+private:
+    bool koko_can_eat(vector<int> &piles, int k, int h) {
+        long long time_taken = 0;
+        for (int i = 0, n = piles.size(); i < n; ++i) {
+            time_taken += (piles[i] / k);
+            if (piles[i] % k != 0)
+                time_taken++;
+        }
+        return time_taken <= h;
+    }
+public:
+    int minEatingSpeed(vector<int>& piles, int hours) {
+        int l = 1, h = *max_element(piles.begin(), piles.end());
+        
+        while (l <= h) {
+            int m = l + (h - l) / 2;
+
+            if (koko_can_eat(piles, m, hours)) {
+                h = m - 1;
+            } else {
+                l = m + 1;
+            }
+        }
+
+        return l;
+    }
+};
