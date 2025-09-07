@@ -1,0 +1,101 @@
+/*
+- m is the number of bouquets needed
+- k is the number of adj flowers needed in order to make a single bouquet
+- m*k is the total number of flowers needed
+- We have n flowers
+- ith flower will bloom on blooDay[i]th day
+- We are FINDING minimum number of days
+
+can_make_m_bouquets(bloomDay, bouquest_req, k, curr_day)
+- count consecutive bloomed flowers
+- a flower is bloomed iff curr_day >= bloomDay[i]
+- if count == k that means we can make 1 bouquet
+    - increase bouquets_made count and reset consec_cnt to 0;
+- However if the flower is not bloomed, then consec_cnt becomes 0 because the streak broke;
+- TRUE: bouquets_ma >= req_bouquets | False Otherwise
+
+
+BRUTE: TC ~ O(n + n * max_day) | SC ~ O(1)
+- Search for day by going from [1, max_element(bloomDay)]
+- max_element(bloomDay) because all the flowers would have bloomed by that day
+class Solution {
+private:
+    bool can_make_m_bouquets(vector<int> &bloomDay, int bouquets_req, int k, int curr_day) {
+        int consec_cnt = 0, bouquets_made = 0;
+        
+        for (int i = 0, n = bloomDay.size(); i < n; ++i) {
+            if (curr_day < bloomDay[i]) {
+                consec_cnt = 0;
+                continue;
+            }
+
+            consec_cnt++;
+            if (consec_cnt == k) {
+                bouquets_made++;
+                consec_cnt = 0;
+            }
+        }
+
+        return bouquets_made >= bouquets_req;
+    }
+public:
+    int minDays(vector<int>& bloomDay, int m, int k) {
+        // Not enough flowers
+        if (m * 1LL * k > bloomDay.size()) return -1;
+
+        int max_day = *max_element(bloomDay.begin(), bloomDay.end());
+        for (int day = 1; day <= max_day; ++day) {
+            if (can_make_m_bouquets(bloomDay, m, k, day)) {
+                return day;
+            }
+        }
+
+        return -1;
+    }
+};
+
+OPTIMAL: TC ~ O(n + nlog(max_day)) | SC ~ O(1)
+- We want to minimize days required <- Optimization problem
+- The condition is monotonic => BS on answers
+
+class Solution {
+private:
+    bool can_make_m_bouquets(vector<int> &bloomDay, int bouquets_req, int k, int curr_day) {
+        int consec_cnt = 0, bouquets_made = 0;
+        
+        for (int i = 0, n = bloomDay.size(); i < n; ++i) {
+            if (curr_day < bloomDay[i]) {
+                consec_cnt = 0;
+                continue;
+            }
+
+            consec_cnt++;
+            if (consec_cnt == k) {
+                bouquets_made++;
+                consec_cnt = 0;
+            }
+        }
+
+        return bouquets_made >= bouquets_req;
+    }
+public:
+    int minDays(vector<int>& bloomDay, int m, int k) {
+        // Not enough flowers
+        if (m * 1LL * k > bloomDay.size()) return -1;
+
+        int low = 1, high = *max_element(bloomDay.begin(), bloomDay.end());
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+
+            if (can_make_m_bouquets(bloomDay, m, k, mid)) {
+                high = mid - 1;
+            } else {
+                low  = mid + 1;
+            }
+        }
+
+        return low;
+    }
+};
+*/
+
