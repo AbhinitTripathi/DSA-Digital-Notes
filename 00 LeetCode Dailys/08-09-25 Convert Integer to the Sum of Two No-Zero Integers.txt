@@ -1,0 +1,17 @@
+class Solution {
+public:
+    vector<int> getNoZeroIntegers(int n) {
+        int a = n, b = 0;
+        int place = 1;
+        while (n > 1) {
+            int delta = 1;
+            if (n % 10 == 1)
+                delta = 2;
+            a -= (delta * place);
+            b += (delta * place);
+            n = (n - delta) / 10;
+            place *= 10;
+        }
+        return {a, b};
+    }
+};
