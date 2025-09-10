@@ -1,0 +1,139 @@
+/*
+- The array has +ve integers in strictly increasing order
+- Many numbers are missing from the array
+    - Among those missing number we want to find the k-th missing number
+
+BRUTE: TC ~ O(n^2 + nk) | SC ~ O(k)
+- For every number from 1 -> 1e9;
+- If the number exists in num then check for next
+- Else add it to the missing_els list
+- Once the missing_els list has k elements out answer is at the last index
+
+Solution {
+public:
+    int findKthPositive(vector<int>& arr, int k) {
+        vector<int> missing_els;
+        int num = 1;
+        while (true) { // TC ~ O(n + k) => 1 2 3 _ 5 _ _ _ _ | arr = {1,2,3,5} k = 5
+            bool missing = true;
+            for (int x : arr) {
+                if (x == num)
+                    missing = false;
+            }
+
+            if (missing) {
+                missing_els.push_back(num);
+            }
+
+            if (missing_els.size() == k)
+                break;
+
+            num++;
+        }
+        return missing_els[k-1];
+    }
+};
+
+BETTER 1: TC ~ O(2n + k) | SC ~ O(n)
+- Same as brute, but we can hash array to optimize searching
+- We do not need the missing_els array
+    - When we get a missing number we can just reduce k and store the number
+    - When k == 0 we will have the answer
+
+class Solution {
+public:
+    int findKthPositive(vector<int>& arr, int k) {
+        int kth_missing = 0;
+        int num = 1;
+
+        unordered_set<int> st;
+        for (int x : arr) st.insert(x);
+
+        while (k > 0) { // TC ~ O(n + k) => 1 2 3 _ 5 _ _ _ _ | arr = {1,2,3,5} k = 5
+            bool missing = true;
+            if (st.count(num) > 0) {
+                missing = false;
+            }
+
+            if (missing) {
+                k--;
+                kth_missing = num;
+            }
+
+            num++;
+        }
+        return kth_missing;
+    }
+};
+
+BETTER 2: TC ~ O(n) | SC ~ O(1)
+- We want the k-th missing positive integer given a strictly increasing sorted array arr
+- Start with the assumption, if the array was empty then kth missing number will be k itself
+    [] k = 5 -> kth_missing = 5
+    [1] k = 5 -> kth_missing = 6
+    [1,3] k = 5 -> kth_missing = 7
+    [1,3,6] k = 5 -> kth_missing = 8
+    [1,3,6,11] k = 5 -> kth_missing = 8 | 11 is ahead than the missing number
+- As we iterate over numbers in arr, if a number x is ≤ current kth_missing,
+  it means x was assumed to be missing in our earlier count,
+  but in reality, x is present in the array.
+  So, we need to "push forward" our missing count by 1.
+
+class Solution {
+public:
+    int findKthPositive(vector<int>& arr, int k) {
+        int kth_missing = k;
+        for (int x : arr) {
+            if (x <= kth_missing) {
+                kth_missing++;
+            } else {
+                break;
+            }
+        }
+
+        return kth_missing;
+    }
+};
+
+OPTIMAL: TC ~ O(logn) | SC ~ O(1)
+- We need to find something
+- The Array is sorted
+- Binary search on answers will not work as the condition is not monotonic
+- But if we observe indexes we can see that IDEALLY
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, ...]
+     0  1  2  3  4  5  6  7  8  9  
+    arr[i] = i+1
+
+    But Since some elements are missing we end up with
+    [2, 3, 4, 7, 11] -> This can help us recognize "How many numbers are missing TILL ith index"
+     0, 1, 2, 3,  4     **Number of missing elements = What is there - What should Have been there**
+
+    - Like this we can make a monotonic condition based on "How many numbers are missing till this index"
+- This wil give us the bounding numbers "Between which the answer might exist"
+- for the array [2,3,4,7,11] k = 5 after BS we will get
+    [2,3,4,7,11] => answer is a number between 7 and 11
+           h  l
+    - How do we find the number?
+        ans = arr[h] + (k - no. of missing element before lower bounding number at arr[h])
+        => ans = arr[h] + [k - {arr[h] - (h + 1)}]
+        => ans = arr[h] + k - arr[h] + (h + 1)
+        => ans = k + (h + 1) <- low = h + 1 after BS;
+        => ans = low + k;
+
+class Solution {
+public:
+    int findKthPositive(vector<int>& arr, int k) {
+        int n = arr.size();
+        int l = 0, h = n-1;
+
+        while (l <= h) {
+            int m = (l + h) / 2;
+            int missing_cnt = arr[m] - (m + 1);
+            if (missing_cnt < k) l = m + 1;
+            else h = m - 1;
+        }
+
+        return l + k;
+    }
+};
+*/
