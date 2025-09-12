@@ -1,0 +1,12 @@
+class Solution {
+public:
+    bool doesAliceWin(string s) {
+        unordered_set<char> hash = {'a', 'e', 'i', 'o', 'u'};
+        int cnt = 0;
+        for (char ch : s) {
+            if (hash.count(ch) > 0) cnt++;
+        }
+
+        return cnt > 0;
+    }
+};

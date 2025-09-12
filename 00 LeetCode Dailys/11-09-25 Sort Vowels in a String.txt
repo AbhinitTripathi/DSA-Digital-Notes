@@ -1,0 +1,24 @@
+class Solution {
+public:
+    string sortVowels(string s) {
+        vector<int> vowels;
+        unordered_set<char> is_vowel = {'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'};
+        for (char ch : s) {
+            if (is_vowel.count(ch) > 0)
+                vowels.push_back(ch);
+        }
+
+        sort(vowels.begin(), vowels.end(), [](char a, char b) {
+            return (int) a < (int) b;
+        });
+
+        int i = 0;
+        for (char &ch : s) {
+            if (is_vowel.count(ch) > 0) {
+                ch = vowels[i++];
+            }
+        }
+
+        return s;
+    }
+};
