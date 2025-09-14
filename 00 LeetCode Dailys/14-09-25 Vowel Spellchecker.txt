@@ -1,0 +1,78 @@
+/*
+CAPITALIZATION
+--------------
+
+- if the spelling is correct we need to return the word according
+  to the 1st matching casing in wordsList
+    - we can have a set of all lowerCase words to check spelling
+    - If the word is valid we can traverse in the wordlist and find the 1st matching word.
+
+VOWEL CHECK
+-----------
+- Checker can tolerate wrong vowels in the word, it will just correct the vowel
+- We can have a set of words with only consonents and we can match consonents of the word
+  if that consonent exists we can return the 1st mathcing word
+
+PRECEDENCE RULES
+----------------
+- If the query exactly matches a word, return that
+- If there is a capitalization problem, correct and return the first match
+- If there is a vowel problem correct and return 1st match
+*/
+class Solution {
+public:
+    vector<string> spellchecker(vector<string>& wordlist, vector<string>& queries) {
+        unordered_set<string> wordlist_st(wordlist.begin(), wordlist.end());
+        unordered_map<string, string> lower_map;
+        unordered_map<string, string> consonent_map;
+        unordered_set<char> vowel = {'a','e','i','o','u'};
+
+        auto to_lower_str = [](string s) {
+            transform(s.begin(), s.end(), s.begin(), ::tolower);
+            return s;
+        };
+
+        auto to_consonents = [&](const string &s) {
+            string t = "";
+            for (char c : s) {
+                char lc = tolower(c);
+                if (vowel.count(lc)) t.push_back('*');
+                else t.push_back(lc);
+            }
+            return t;
+        };
+
+        for (auto &w : wordlist) {
+            string low = to_lower_str(w);
+            if (!lower_map.count(low))
+                lower_map[low] = w;
+
+            string con = to_consonents(w);
+            if (!consonent_map.count(con))
+                consonent_map[con] = w;
+        }
+
+        vector<string> ans;
+        for (auto &q : queries) {
+            if (wordlist_st.count(q)) {
+                ans.push_back(q);
+                continue;
+            }
+
+            string low = to_lower_str(q);
+            if (lower_map.count(low)) {
+                ans.push_back(lower_map[low]);
+                continue;
+            }
+
+            string con = to_consonents(q);
+            if (consonent_map.count(con)) {
+                ans.push_back(consonent_map[con]);
+                continue;
+            }
+
+            ans.push_back("");
+        }
+        return ans;
+    }
+};
