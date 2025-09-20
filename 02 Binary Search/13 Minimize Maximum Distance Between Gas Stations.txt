@@ -72,7 +72,7 @@ double minimiseMaxDistance(vector<int> &arr, int k) {
     return pq.top().first;
 }
 
-OPTIMAL: O()
+OPTIMAL: TC ~ O(n + n * (max_gap / precision)) | SC ~ O(1)
 - We want to optimize the maximum distance between two gas stations
 - The maximum distance can go from 0 -> current max difference...
     (Max difference can only reduce because we want to optimize the max dist)
@@ -88,7 +88,7 @@ bool isPossible(long double maxAllowedDist, vector<int> &arr, int gs_available) 
     int n = arr.size();
     int gs_placed = 0;
 
-    for (int i = 0; i < n-1; ++i) {
+    for (int i = 0; i < n-1; ++i) { -> O(n)
         long double dist = arr[i+1] - arr[i];
         int stationsBetween = ceil(dist / maxAllowedDist) - 1;
         gs_placed += stationsBetween;
