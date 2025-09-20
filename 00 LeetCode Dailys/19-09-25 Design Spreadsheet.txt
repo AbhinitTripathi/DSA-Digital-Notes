@@ -1,0 +1,59 @@
+class Spreadsheet {
+private:
+    vector<vector<int>> sheet;
+
+public:
+    Spreadsheet(int rows) {
+        sheet.resize(rows + 1, vector<int>(26, 0));
+    }
+
+    pair<int, int> get_cell(const string &cell) {
+        if (!isalpha(cell[0])) return {-1, -1};
+        int col = cell[0] - 'A';
+        int row = stoi(cell.substr(1));
+        return {row, col};
+    }
+    
+    void setCell(string cell, int value) {
+        auto [row, col] = get_cell(cell);
+        sheet[row][col] = value;
+    }
+    
+    void resetCell(string cell) {
+        auto [row, col] = get_cell(cell);
+        sheet[row][col] = 0;
+    }
+    
+    int getValue(string formula) {
+        int n = formula.length();
+        int p_ind = formula.find('+');
+
+        // Left and right parts without the '='
+        string X = formula.substr(1, p_ind - 1);      // from index 1 up to before '+'
+        string Y = formula.substr(p_ind + 1);          // from after '+'
+
+        int v1 = 0, v2 = 0;
+
+        if (isdigit(X[0])) v1 = stoi(X);
+        else {
+            auto [r1, c1] = get_cell(X);
+            v1 = sheet[r1][c1];
+        }
+
+        if (isdigit(Y[0])) v2 = stoi(Y);
+        else {
+            auto [r2, c2] = get_cell(Y);
+            v2 = sheet[r2][c2];
+        }
+
+        return v1 + v2;
+    }
+};
+
+/**
+ * Your Spreadsheet object will be instantiated and called as such:
+ * Spreadsheet* obj = new Spreadsheet(rows);
+ * obj->setCell(cell,value);
+ * obj->resetCell(cell);
+ * int param_3 = obj->getValue(formula);
+ */

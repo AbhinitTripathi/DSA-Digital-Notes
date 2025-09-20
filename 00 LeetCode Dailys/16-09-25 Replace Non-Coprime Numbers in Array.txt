@@ -1,0 +1,41 @@
+/*
+- Whenever we see the behaviour like "The result of an operation
+  on two entities can operate with a 3rd entity" we can use a stack
+  there.
+- e.g. [2, 7, 14] -> gcd(2, 7) = 1 | can't do anything
+                  -> gcd(7, 14) = 7 | replace 7 and 14 with 14
+       [2, 14]    -> gcd(2, 14) = Here the result 14 is useful
+                                  for 2
+Whenever we see this kind of 
+*/
+
+class Solution {
+public:
+    vector<int> replaceNonCoprimes(vector<int>& nums) {
+        int n = nums.size();
+        // Use a vector as stack
+        vector<int> st;
+        // Use it as such
+        // While we can make pair with the top stack element
+        // Make it and replace top with LCM
+
+        for (int &x : nums) {
+            while (!st.empty()) {
+                int prev = st.back();
+                int curr = x;
+
+                int GCD = gcd(prev, curr);
+                if (GCD == 1)
+                    break;
+
+                st.pop_back();
+                int LCM = (prev * 1LL * curr) / GCD;
+                
+                x = LCM;
+            }
+            st.push_back(x);
+        }
+
+        return st;
+    }
+};

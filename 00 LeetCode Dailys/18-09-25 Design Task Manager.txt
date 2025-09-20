@@ -1,0 +1,45 @@
+class TaskManager {
+private:
+    set<tuple<int, int, int>> pq; // (-priority, -taskId, userId)
+    unordered_map<int, pair<int, int>> t_id_mp; // taskId -> {userId, priority}
+
+public:
+    TaskManager(vector<vector<int>>& tasks) {
+        for (auto &task : tasks) {
+            int u_id = task[0], t_id = task[1], priority = task[2];
+            pq.insert({-priority, -t_id, u_id});
+            t_id_mp[t_id] = {u_id, priority};
+        }
+    }
+    
+    void add(int userId, int taskId, int priority) {
+        t_id_mp[taskId] = {userId, priority};
+        pq.insert({-priority, -taskId, userId});
+    }
+    
+    void edit(int taskId, int newPriority) {
+        auto &[u_id, oldPriority] = t_id_mp[taskId];
+        pq.erase({-oldPriority, -taskId, u_id});
+
+        t_id_mp[taskId] = {u_id, newPriority};
+        pq.insert({-newPriority, -taskId, u_id});
+    }
+    
+    void rmv(int taskId) {
+        auto &[u_id, priority] = t_id_mp[taskId];
+        pq.erase({-priority, -taskId, u_id});
+        t_id_mp.erase(taskId);
+    }
+    
+    int execTop() {
+        if (pq.empty()) return -1;
+        
+        auto [p, nt, u] = *pq.begin();
+        int t = -nt;
+
+        pq.erase(pq.begin());
+        t_id_mp.erase(t);
+
+        return u;
+    }
+};

@@ -1,0 +1,29 @@
+class FoodRatings {
+private:
+    unordered_map<string, pair<string, int>> food_mp;          // food -> (cuisine, rating)
+    unordered_map<string, set<pair<int, string>>> cuisine_mp;  // cuisine -> set<(-rating, food)>
+    
+public:
+    FoodRatings(vector<string>& foods, vector<string>& cuisines, vector<int>& ratings) {
+        int n = foods.size();
+        for (int i = 0; i < n; ++i) {
+            string food = foods[i];
+            string cuisine = cuisines[i];
+            int rating = ratings[i];
+            food_mp[food] = {cuisine, rating};
+            cuisine_mp[cuisine].insert({-rating, food});
+        }
+    }
+    
+    void changeRating(string food, int newRating) {
+        auto &[cuisine, rating] = food_mp[food];
+        cuisine_mp[cuisine].erase({-rating, food});
+        rating = newRating;
+        cuisine_mp[cuisine].insert({-newRating, food});
+    }
+    
+    string highestRated(string cuisine) {
+        auto &[negRating, food] = *cuisine_mp[cuisine].begin();
+        return food;
+    }
+};
