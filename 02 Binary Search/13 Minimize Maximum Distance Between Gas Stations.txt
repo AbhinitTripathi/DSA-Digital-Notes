@@ -1,0 +1,125 @@
+/*
+- The array represents position of n gas stations
+	- Position has to be sorted
+- We are allowed to insert k gas stations between existing ones
+	- Maybe we need to count how many new stations we
+	  placed between each existing gas stations
+	- int howMany[n-1] = {0, 0, 0, ..., 0};
+
+BRUTE: TC ~ O(n * k + n) | SC ~ O(n);
+- We can place gas stations one at a time -> O(k)
+	- Find the maximum distance b/w any two adjascent stations -> O(n)
+	- Place a gas station in that section and update max dist by
+		----------------------------------------------------
+		|	original_dist / (no. of stations placed + 1)   |
+		----------------------------------------------------
+
+double minimiseMaxDistance(vector<int> &arr, int k) {
+    int n = arr.size();
+    vector<int> howMany(n - 1, 0);
+
+    for (int gs = 1; gs <= k; ++gs) { // -> O(k)
+        double max_section = -1;
+        int max_ind = -1;
+
+        for (int i = 0; i < n - 1; ++i) { // -> O(n)
+            double section_dist = (double)(arr[i+1] - arr[i]) / (howMany[i] + 1);
+            if (section_dist > max_section) {
+                max_section = section_dist;
+                max_ind = i;
+            }
+        }
+
+        howMany[max_ind]++;
+    }
+
+    double max_ans = -1;
+    for (int i = 0; i < n - 1; ++i) { // -> O(n)
+        double section_len = (double)(arr[i+1] - arr[i]) / (howMany[i] + 1);
+        max_ans = max(max_ans, section_len);
+    }
+
+    return max_ans;
+}
+
+BETTER: TC ~ O((n + k)logn) | SC ~ O(2n)
+- Same approach as above
+    - We can optimize finding the max_dist using a priority queue
+
+#include <bits/stdc++.h>
+double minimiseMaxDistance(vector<int> &arr, int k) {
+    int n = arr.size();
+    vector<int> section(n - 1, 0);
+
+    priority_queue<pair<double, int>> pq;
+    for (int i = 0; i < n - 1; ++i) { // O(nlogn)
+        double dist = arr[i+1] - arr[i];
+        pq.push({dist, i});
+    }
+
+    for (int gs = 1; gs <= k; ++gs) {  // O(k log n)
+        auto [max_dist, ind] = pq.top();
+        pq.pop();
+
+        section[ind]++;
+
+        double original_dist = arr[ind+1] - arr[ind];
+        double new_dist = original_dist / (section[ind] + 1);
+
+        pq.push({new_dist, ind});
+    }
+
+    return pq.top().first;
+}
+
+OPTIMAL: O()
+- We want to optimize the maximum distance between two gas stations
+- The maximum distance can go from 0 -> current max difference...
+    (Max difference can only reduce because we want to optimize the max dist)
+- Since we need to do BS on real numbers...the answer space turns out ot be infinite
+- We cannot do low = mid + 1 or high = mid - 1, Why?
+    - When we do low = mid + 1 we miss all the real numbers between mid and low
+- We cannot do while (low <= high) because the they are working with real numbers
+  they can go infinitely smaller (high tends to low but never reaches it)
+
+
+#include <bits/stdc++.h>
+bool isPossible(long double maxAllowedDist, vector<int> &arr, int gs_available) {
+    int n = arr.size();
+    int gs_placed = 0;
+
+    for (int i = 0; i < n-1; ++i) {
+        long double dist = arr[i+1] - arr[i];
+        int stationsBetween = ceil(dist / maxAllowedDist) - 1;
+        gs_placed += stationsBetween;
+        if (gs_placed > gs_available) return false;
+    }
+
+    return true;
+}
+
+long double minimiseMaxDistance(vector<int> &arr, int k) {
+    int n = arr.size();
+    long double low  = 0;
+    long double high = 0;
+
+    for (int i = 0; i < n-1; ++i) {
+        high = max(high, (long double)(arr[i+1] - arr[i]));
+    }
+
+    const long double MIN_LIMIT = 1e-6;
+    long double ans = high;
+
+    while (high - low > MIN_LIMIT) {
+        long double mid = (low + high) / 2.0;
+        if (isPossible(mid, arr, k)) {
+            high = mid;
+            ans  = mid;
+        } else {
+            low  = mid;
+        }
+    }
+
+    return ans;
+}
+*/
