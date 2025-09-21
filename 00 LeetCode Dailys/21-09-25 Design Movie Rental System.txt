@@ -1,0 +1,81 @@
+/*
+- Search:
+    - Finds the cheapest 5 shops that have the given movie
+        => map(movie -> min_heap(price, shops)), use set for min_heap
+    - return min(5, pq.size()) shops;
+- Rent:
+    - Unrented movies should be added to rented list and removed
+      from movie_map
+- Drop:
+    - Rented movies when dropped should be removed from rented
+      list and added to movie_map
+- Report:
+    - Returns the 5 cheapest rented movies (can be the same movie
+      from different shops/price)
+        => min_heap for rented movies but implement using 
+           ordered set, this will allow us to remove movies
+           that are dropped to the shop
+    -
+*/
+class MovieRentingSystem {
+private:
+    unordered_map<
+        int, 
+        set<pair<int, int>>
+    > movie_map; // <movie, <price, shop>>
+    set<tuple<int, int, int>> rented; // <price, shop, movie>
+    map<pair<int, int>, int> price_map; // <{shop, movie}, price>;
+public:
+    MovieRentingSystem(int n, vector<vector<int>>& entries) {
+        for (auto &e : entries) {
+            int shop = e[0], movie = e[1], price = e[2];
+            this->movie_map[movie].insert({price, shop});
+            this->price_map[{shop, movie}] = price;
+        }
+    }
+    
+    vector<int> search(int movie) {
+        vector<int> shops;
+        int i = 0;
+        for (auto &[price, shop] : movie_map[movie]) {
+            shops.push_back({shop});
+            i++;
+
+            if (i >= 5) break;
+        }
+        return shops;
+    }
+    
+    void rent(int shop, int movie) {
+        int price = price_map[{shop, movie}];
+        rented.insert({price, shop, movie});
+        movie_map[movie].erase({price, shop});
+    }
+    
+    void drop(int shop, int movie) {
+        int price = price_map[{shop, movie}];
+        rented.erase({price, shop, movie});
+        movie_map[movie].insert({price, shop});
+    }
+    
+    vector<vector<int>> report() {
+        vector<vector<int>> res;
+        int cnt = 0;
+        for (auto &[_, shop, movie] : rented) {
+            res.push_back({shop, movie});
+            cnt++;
+
+            if (cnt >= 5) break;
+        }
+        return res;
+    }
+};
+
+/**
+ * Your MovieRentingSystem object will be instantiated and called as such:
+ * MovieRentingSystem* obj = new MovieRentingSystem(n, entries);
+ * vector<int> param_1 = obj->search(movie);
+ * obj->rent(shop,movie);
+ * obj->drop(shop,movie);
+ * vector<vector<int>> param_4 = obj->report();
+ */
