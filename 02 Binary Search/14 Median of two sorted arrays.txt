@@ -1,0 +1,160 @@
+/*
+- Given 2 sorted arrays individually
+- We want to look at the merged array
+  that is sorted & find it's median
+- Array length is Even: median at (m + n) / 2 + (m + n + 1) / 2
+  Array length is Odd : median at (m + n) / 2
+
+------------------------------------------------
+BRUTE: TC ~ O(n + m) | SC ~ O(n + m)
+- Merge both arrays
+- Then find the median of merged arrays
+
+class Solution {
+  public:
+    double medianOf2(vector<int>& a, vector<int>& b) {
+        int m = a.size(), n = b.size();
+        vector<int> merged;
+        merged.reserve(m + n);
+
+        int i = 0, j = 0;
+
+        // merge both arrays
+        while (i < m && j < n) {
+            if (a[i] <= b[j]) merged.push_back(a[i++]);
+            else merged.push_back(b[j++]);
+        }
+        while (i < m) merged.push_back(a[i++]);
+        while (j < n) merged.push_back(b[j++]);
+
+        int N = m + n;
+        if (N % 2 == 1) {
+            return merged[N / 2]; // odd length
+        } else {
+            return (merged[N / 2 - 1] + merged[N / 2]) / 2.0; // even length
+        }
+    }
+};
+
+------------------------------------------------
+BETTER: 
+- We know the median dependng on the parity of final size
+- Merge Both arrays hypothetically keeping track of index of
+  merged array
+- When we reach the target elements take them and calculate median
+
+class Solution {
+  public:
+    double medianOf2(vector<int>& a, vector<int>& b) {
+        int m = a.size(), n = b.size();
+        int N = m + n;
+
+        int i = 0, j = 0;   // pointers for arrays
+        int count = 0;      // index in merged array
+        int idx1 = (N - 1) / 2; // left median index
+        int idx2 = N / 2;       // right median index
+
+        int val1 = -1, val2 = -1;
+
+        // merge simulation
+        while (i < m || j < n) {
+            int x;
+            if (j >= n || (i < m && a[i] <= b[j])) {
+                x = a[i++];
+            } else {
+                x = b[j++];
+            }
+
+            if (count == idx1) val1 = x;
+            if (count == idx2) {
+                val2 = x;
+                break; // we got both median elements
+            }
+            count++;
+        }
+
+        if (N % 2 == 1) return (double) val2; // odd length
+        return (val1 + val2) / 2.0;           // even length
+    }
+};
+
+------------------------------------------------
+OPTIMAL: TC ~ O(min(a.size, b.size)) | SC ~ O(1);
+Idea:
+- Median splits the merged array into 2 halves:
+    - Left half (size = (m+n+1)/2)
+    - Right half (remaining elements)
+- We need to pick just the right count of elements
+  from `a` and `b` such that:
+    max(left part) <= min(right part)
+
+Median:
+- If total size is ODD:
+      median = max(left part)
+- If total size is EVEN:
+      median = (max(left part) + min(right part)) / 2
+
+Algorithm:
+1. Always binary search on the smaller array (say `a`).
+2. mid = number of elements taken from `a`.
+   => left - mid = elements from `b`.
+3. Define partition borders:
+      l1 = last element taken from `a`
+      l2 = last element taken from `b`
+      r1 = next element in `a`
+      r2 = next element in `b`
+   (Use INT_MIN / INT_MAX as sentinels if out of bounds)
+4. Check:
+      if (l1 <= r2 && l2 <= r1):
+          correct partition → compute median
+      else if (l2 > r1):
+          move right in `a` (low = mid+1)
+      else:
+          move left in `a` (high = mid-1)
+------------------------------------------------
+*/
+
+class Solution {
+  public:
+    double medianOf2(vector<int>& a, vector<int>& b) {
+        int m = a.size(), n = b.size();
+
+        // ensure `a` is the smaller array
+        if (m > n) 
+            return medianOf2(b, a);
+        
+        int N = m + n;
+        int left = (N + 1) / 2; // size of left half
+
+        int low = 0, high = m;
+        while (low <= high) {
+            int mid = (low + high) / 2; // pick from a
+            int Ea = mid;               // elements from a
+            int Eb = left - mid;        // elements from b
+
+            // borders of partitions
+            int l1 = INT_MIN, l2 = INT_MIN;
+            int r1 = INT_MAX, r2 = INT_MAX;
+
+            if (Ea - 1 >= 0) l1 = a[Ea - 1];
+            if (Eb - 1 >= 0) l2 = b[Eb - 1];
+            if (Ea < m) r1 = a[Ea];
+            if (Eb < n) r2 = b[Eb];
+
+            //vcorrect partition
+            if (l1 <= r2 && l2 <= r1) {
+                if (N % 2 == 1) 
+                    return (double) max(l1, l2); // odd case
+                else 
+                    return (max(l1, l2) + min(r1, r2)) / 2.0; // even case
+            }
+            // need to take more from a
+            else if (l2 > r1)
+                low = mid + 1;
+            // need to take fewer from a
+            else 
+                high = mid - 1;
+        }
+        return 0.0; // dummy return (shouldn't reach here)
+    }
+};
