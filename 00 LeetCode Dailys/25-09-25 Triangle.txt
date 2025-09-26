@@ -1,0 +1,23 @@
+class Solution {
+private:
+    vector<vector<int>> dp;
+
+    int min_path_sum(vector<vector<int>> &triangle, int r, int c) {
+        int n = triangle.size();
+        if (r == n-1) return triangle[r][c];
+
+        if (dp[r][c] != INT_MIN) return dp[r][c];
+
+        int p1 = min_path_sum(triangle, r + 1, c);
+        int p2 = min_path_sum(triangle, r + 1, c + 1);
+
+        return dp[r][c] = triangle[r][c] + min(p1, p2);
+    }
+
+public:
+    int minimumTotal(vector<vector<int>>& triangle) {
+        int n = triangle.size();
+        dp.assign(n, vector<int>(n, INT_MIN));
+        return min_path_sum(triangle, 0, 0);
+    }
+};
