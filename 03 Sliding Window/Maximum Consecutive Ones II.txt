@@ -1,0 +1,62 @@
+/*
+- We have an array with 0s or 1s
+- We have an integer k -> Number Of Operations
+    - We can flip atmost k zeroes to one
+        - Maximum Consecutive Ones with K zeroes allowed
+
+BRUTE: TC ~ O(n^2)
+- Generate all Subarrays
+- Check length of subararys that have at most k zeroes
+
+class Solution {
+  public:
+    int maxOnes(vector<int>& arr, int k) {
+        // code here
+        int n = arr.size();
+        int max_len = 0;
+        for (int i = 0; i < n; ++i) {
+            int cnt = 0;
+            for (int j = i; j < n; ++j) {
+                if (arr[j] == 0) {
+                    cnt++;
+                }
+                
+                if (cnt > k) break;
+                
+                max_len = max(max_len, j - i + 1);
+            }
+        }
+        
+        return max_len;
+    }
+};
+------------------------
+
+OPTIMAL: TC ~ O(2n) | SC ~ O(1)
+- Mentain a Sliding Window with ones and at most k zeroes
+- When 0s > k -> start excluding elements from left
+
+class Solution {
+  public:
+    int maxOnes(vector<int>& arr, int k) {
+        int n = arr.size();
+        int max_len = 0;
+        
+        int l = 0, r = 0;
+        int zero_cnt = 0;
+        while (r < n) {
+            if (arr[r] == 0) zero_cnt++;
+            while (zero_cnt > k) {
+                if (arr[l] == 0)
+                    zero_cnt--;
+                l++;
+            }
+            
+            max_len = max(max_len, r-l+1);
+            r++;
+        }
+        
+        return max_len;
+    }
+};
+*/
