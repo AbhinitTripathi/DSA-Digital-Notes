@@ -1,0 +1,67 @@
+/*
+- We are given an array 'fruits' where fruits[i] represents the type of fruit on the i-th tree.
+- You have 2 baskets, each can hold only ONE type of fruit but unlimited quantity.
+- Starting from any tree, you must pick exactly one fruit from each consecutive tree moving right.
+- You stop when you encounter a third fruit type that cannot fit into any basket.
+- Return the maximum number of fruits you can pick (i.e. the length of the longest subarray with at most 2 distinct elements).
+
+Example:
+    fruits = [1,2,1] -> 3 (we can take all)
+    fruits = [0,1,2,2] -> 3 (subarray [1,2,2])
+    fruits = [1,2,3,2,2] -> 4 (subarray [2,3,2,2])
+    fruits = [3,3,3,1,2,1,1,2,3,3,4] -> 5
+
+--------------------------------------------------------------
+BRUTE: TC ~ O(n^2) | SC ~ O(3)
+- For every starting index i, expand j to the right until the window contains more than 2 distinct fruit types.
+- Track fruit frequencies using a map.
+- Update max_len whenever we have a valid window.
+
+class Solution {
+public:
+    int totalFruit(vector<int>& fruits) {
+        int n = fruits.size();
+        int res = 0;
+
+        for (int i = 0; i < n; i++) {
+            unordered_map<int, int> count;
+            for (int j = i; j < n; j++) {
+                count[fruits[j]]++;
+                if (count.size() > 2)
+                    break;
+                res = max(res, j - i + 1);
+            }
+        }
+        return res;
+    }
+};
+
+--------------------------------------------------------------
+OPTIMAL: Sliding Window (Two Pointers) TC ~ O(n) | SC ~ O(3)
+- Maintain a window [l, r] such that it always contains at most 2 distinct fruit types.
+- Expand r, and if we now have more than 2 types, move l forward until the condition is satisfied again.
+- Keep updating the max window length.
+
+class Solution {
+public:
+    int totalFruit(vector<int>& fruits) {
+        unordered_map<int, int> count;
+        int l = 0, res = 0;
+
+        for (int r = 0; r < fruits.size(); r++) {
+            count[fruits[r]]++;
+
+            while (count.size() > 2) {
+                count[fruits[l]]--;
+                if (count[fruits[l]] == 0)
+                    count.erase(fruits[l]);
+                l++;
+            }
+
+            res = max(res, r - l + 1);
+        }
+
+        return res;
+    }
+};
+*/

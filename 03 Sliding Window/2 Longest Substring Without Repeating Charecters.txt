@@ -1,0 +1,92 @@
+/*
+- We are given a string s (contains characters, e.g. lowercase or general ASCII)
+- We need to find the LENGTH of the LONGEST SUBSTRING that has ALL UNIQUE (non-repeating) characters
+
+Example:
+    s = "geeksforgeeks" -> 7 ("eksforg" or "ksforge")
+    s = "aaa" -> 1 ("a")
+    s = "abcdefabcbb" -> 6 ("abcdef")
+
+--------------------------------------------------------------
+BRUTE: TC ~ O(n^2) | SC ~ O(256)
+- For every starting index i, expand the substring until a character repeats
+- Track visited characters for each starting point
+- Update max_len whenever we get a longer substring
+
+class Solution {
+public:
+    int longestUniqueSubstr(string s) {
+        int n = s.size();
+        int res = 0;
+
+        for (int i = 0; i < n; i++) {
+            vector<bool> visited(256, false);
+            for (int j = i; j < n; j++) {
+                if (visited[(unsigned char)s[j]])
+                    break;
+                visited[(unsigned char)s[j]] = true;
+                res = max(res, j - i + 1);
+            }
+        }
+        return res;
+    }
+};
+
+--------------------------------------------------------------
+BETTER: Sliding Window (Two Pointers) TC ~ O(n) | SC ~ O(256)
+- Maintain a window [l, r] where all characters are unique
+- Expand r, and if we encounter a repeat, move l forward until the substring becomes valid again
+- Keep updating the maximum length of the window
+
+class Solution {
+public:
+    int longestUniqueSubstr(string s) {
+        int n = s.size();
+        vector<int> freq(256, 0);
+        int l = 0, res = 0;
+
+        for (int r = 0; r < n; r++) {
+            freq[(unsigned char)s[r]]++;
+            while (freq[(unsigned char)s[r]] > 1) {
+                freq[(unsigned char)s[l]]--;
+                l++;
+            }
+            res = max(res, r - l + 1);
+        }
+        return res;
+    }
+};
+
+--------------------------------------------------------------
+OPTIMAL: Using Last Occurrence Index TC ~ O(n) | SC ~ O(256)
+- Maintain an array lastIndex[] that stores the last seen index of each character
+- Maintain a variable 'start' that marks the beginning of the current valid substring
+- For every character s[end]:
+    - If it was seen within the current window, move start = lastIndex[s[end]] + 1
+    - Update res = max(res, end - start + 1)
+    - Update lastIndex[s[end]] = end
+
+Example Walkthrough:
+    s = "abba"
+    lastIndex['a'] = -1, lastIndex['b'] = -1, start = 0
+    end = 0 -> 'a' -> res = 1
+    end = 1 -> 'b' -> res = 2
+    end = 2 -> 'b' (seen) -> start = 2 -> res = 2
+    end = 3 -> 'a' -> res = 2 (max remains)
+
+class Solution {
+public:
+    int longestUniqueSubstr(string s) {
+        int n = s.size();
+        vector<int> lastIndex(256, -1);
+        int res = 0, start = 0;
+
+        for (int end = 0; end < n; end++) {
+            start = max(start, lastIndex[(unsigned char)s[end]] + 1);
+            res = max(res, end - start + 1);
+            lastIndex[(unsigned char)s[end]] = end;
+        }
+        return res;
+    }
+};
+*/
