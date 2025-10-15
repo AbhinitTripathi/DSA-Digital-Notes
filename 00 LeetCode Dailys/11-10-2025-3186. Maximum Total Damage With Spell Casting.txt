@@ -1,0 +1,40 @@
+typedef long long ll;
+
+class Solution {
+private:
+    unordered_map<ll, ll> freq;
+    vector<ll> dp;
+    int n;
+
+    ll f(vector<ll> &nums, int i) {
+        if (i >= n) return 0;
+
+        if (dp[i] != -1) return dp[i];
+
+        // Option 1: Skip current
+        ll skip = f(nums, i + 1);
+
+        // Option 2: Take current
+        int next = upper_bound(nums.begin(), nums.end(), nums[i] + 2) - nums.begin();
+        ll take = nums[i] * freq[nums[i]] + f(nums, next);
+
+        return dp[i] = max(skip, take);
+    }
+
+public:
+    ll maximumTotalDamage(vector<int>& power) {
+        dp.resize(1e5 + 1, -1);
+        
+        // Count frequencies
+        for (int x : power) freq[x]++;
+
+        // Build sorted unique values
+        vector<ll> nums;
+        for (auto &it : freq) nums.push_back(it.first);
+        sort(nums.begin(), nums.end());
+
+        n = nums.size();
+
+        return f(nums, 0);
+    }
+};

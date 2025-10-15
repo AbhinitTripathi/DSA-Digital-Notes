@@ -1,0 +1,36 @@
+class Solution {
+private:
+    bool canFind(vector<int>& nums, int k) {
+        int n = nums.size();
+        if (2 * k > n) return false;
+
+        int inc = 1;
+        int prevInc = 0;
+
+        for (int i = 1; i < n; ++i) {
+            if (nums[i] > nums[i - 1]) {
+                ++inc;
+            } else {
+                prevInc = inc;
+                inc = 1;
+            }
+
+            if (inc >= 2 * k || min(prevInc, inc) >= k) return true;
+        }
+        return false;
+    }
+public:
+    int maxIncreasingSubarrays(vector<int>& nums) {
+        int n = nums.size();
+        int l = 1, h = n/2;
+        while (l <= h) {
+            int m = (l + h) / 2;
+            if (canFind(nums, m))
+                l = m + 1;
+            else 
+                h = m - 1;
+        }
+
+        return h;
+    }
+};

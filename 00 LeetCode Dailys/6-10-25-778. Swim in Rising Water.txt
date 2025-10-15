@@ -1,0 +1,36 @@
+class Solution {
+public:
+    int swimInWater(vector<vector<int>>& grid) {
+        int n = grid.size();
+        int min_time = 1e9;
+        priority_queue<
+            tuple<int, int, int>,
+            vector<tuple<int, int, int>>,
+            greater<tuple<int, int, int>>
+        > pq;
+        pq.push({grid[0][0], 0, 0});
+        vector<vector<int>> vis(n, vector<int>(n, 0));
+        int dr[4] = {1, 0, 0, -1};
+        int dc[4] = {0, -1, 1, 0};
+        vector<pair<int, int>> dl = {{1,0}, {0,-1}, {0,1}, {-1,0}};
+
+        while (!pq.empty()) {
+            auto [t, r, c] = pq.top();
+            pq.pop();
+
+            if (r == n-1 && c == n-1)
+                return t;
+            if (vis[r][c])
+                continue;
+            vis[r][c] = 1;
+            for (auto [dr, dc] : dl) {
+                int nr = r + dr, nc = c + dc;
+                if (nr < 0 || nr >= n || nc < 0 || nc >= n || vis[nr][nc])
+                    continue;
+                pq.push({max(t, grid[nr][nc]), nr, nc});
+            }
+        }
+
+        return -1;
+    }
+};
