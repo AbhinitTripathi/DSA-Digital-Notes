@@ -1,0 +1,31 @@
+/*
+- We can add or subtract "value" from any of the elements in nums
+- MEX (Minimum EXcluded): Smallest missing non-negative integer
+                          in the array
+- Find the maximum MEX after applying the said operation any
+  number of times
+*/
+
+class Solution {
+public:
+    int findSmallestInteger(vector<int>& nums, int v) {
+        int n = nums.size();
+        unordered_map<int, int> mp;
+        for (int x : nums) {
+            int key = ((x % v) + v) % v;
+            mp[key]++;
+        }
+
+        int mex_val = 0;
+        while (true) {
+            int key = ((mex_val % v) + v) % v;
+            if (mp[key] <= 0)
+                return mex_val;
+            else 
+                mp[key]--;
+            mex_val++;
+        }
+
+        return -1;
+    }
+};
