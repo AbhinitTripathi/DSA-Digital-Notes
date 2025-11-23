@@ -1,0 +1,77 @@
+class Solution {
+private:
+    void solve(
+        string &num,
+        long long ind, long long calc,
+        long long prev_el,
+        string exp,
+        vector<string>& res,
+        long long target
+    ) {
+        if (ind == num.length()) {
+            if (calc == target)
+                res.push_back(exp);
+            return;
+        }
+
+        string curr_str = "";
+        long long x = 0;
+
+        long long n = num.length();
+        for (long long i = ind; i < n; ++i) {
+            // WHAT IF, Number starts from 0
+            if (i > ind && num[ind] == '0') return;
+
+            // "", "1", "12", "123"
+            // Making substring from [ind, i]
+            // This will be added to the exp
+            curr_str += num[i];
+
+            // Create the number
+            // This will be used to calculate calc till target
+            x = x * 10 + (num[i]-'0');
+
+            if (ind == 0) {
+                // MUST TAKE A NUMBER
+                solve(num, i+1, x, x, exp + curr_str, res, target);
+            } else {
+                // +
+                // Prev element is x itself
+                solve(num, i+1, calc+x, x, exp + '+' + curr_str, res, target);
+                // -
+                // Prev element is -x because being negative is the property
+                // of a number | something - x = something + (-x)
+                solve(num, i+1, calc-x, -x, exp + '-' + curr_str, res, target);
+                // *
+                /*
+                When we are multiplying in expression 1+2*8
+                what should happen: 1 + (2 * 8)
+                BUT SINCE WE ARE KEEPING A RUNNING CALC
+                what is happening: (1 + 2) * 8
+
+                -> If we want to have the correct epression
+                    2 ust be multiplied by 8
+                    => Keep track of the previously operated number
+                -> Now since we have the previously operated number
+                    we can get 1 in 1 + (2 * 8) by doing
+                    calc - prev_el
+                    then out calculation becomed
+                    (3 - 2) + (2 * b)
+                    -------------------------------------------
+                    | (calc - prev_el) + (prev_el * curr_el) |
+                    -------------------------------------------
+                */
+                // Prev Element will be (prev_el * curr_el) as that number
+                // was solved first then the operation (+, -) happened
+                solve(num, i+1, (calc - prev_el) + (prev_el * x), prev_el * x, exp + '*' + curr_str, res, target);
+            }
+            
+        }
+    }
+public:
+    vector<string> addOperators(string num, long long target) {
+        vector<string> res;
+        solve(num, 0, 0, 0, "", res, target);
+        return res;
+    }
+};
